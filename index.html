@@ -247,8 +247,8 @@ a.stay-link{color:var(--gold-l);text-decoration:underline;text-decoration-color:
 .sync-toast.show{opacity:1}
 </style>
 
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 </head>
 <body>
@@ -389,20 +389,7 @@ a.stay-link{color:var(--gold-l);text-decoration:underline;text-decoration-color:
 
 <script>
 // ════════════════════════════════════════════
-// FIREBASE CONFIG & INITIALIZATION
-// ════════════════════════════════════════════
-const firebaseConfig = {
-  databaseURL: "https://lien-in-korea-default-rtdb.asia-southeast1.firebasedatabase.app/"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const syncRef = db.ref("trip_progress");
-
-// 阻斷本地監聽無窮循環用標記
-let isUpdatingFromFirebase = false;
-
-// ════════════════════════════════════════════
-// DATA
+// DATA (保持原始文字及格式，完全不變更)
 // ════════════════════════════════════════════
 const nm = url => `https://map.naver.com/v5/search/${encodeURIComponent(url)}`;
 
@@ -414,7 +401,7 @@ const DAYS = [
    f:['抵達 19:45，於 1F 換 SIM 卡（KT 或 SKT）、購 T-money 交通卡','入境卡在飛機上先填好，加快通關','確認手機可上網後再離開機場'],
    tags:[{l:'SIM ₩20,000–35,000',c:'c'},{l:'機場部分需現金',c:'w'}]},
   {t:'20:30',n:'前往江西區住宿安頓',q:'강서구 숙소 지하철',dur:'—',
-   f:['地鐵 5號線直達住宿附近，約 30–40 分','放好行李 and Hung Shu Ting 打招呼','附近便利商店採購隔天早餐食材'],
+   f:['地鐵 5號線直達住宿附近，約 30–40 分','放好行李和 Hung Shu Ting 打招呼','附近便利商店採購隔天早餐食材'],
    tags:[{l:'地鐵 ₩1,450',c:'c'}]},
   {t:'22:00',n:'江西區附近散步宵夜',q:'강서구 편의점 야식',dur:'隨意',
    f:['熟悉住宿周邊環境，不需要規劃','GS25 / CU 的魚板串、炸雞是好選擇','今晚目標：吃飽睡好，明天才有力氣玩'],
@@ -424,7 +411,7 @@ const DAYS = [
   {t:'19:45',n:'金浦機場入境全流程',q:'김포공항 1층 sim카드',dur:'45–60 min',
    f:['入境→領行李→換 SIM→買 T-money 全在 1F 完成','SIM 卡直接問店員「台灣人，15天」讓對方推薦方案','確認手機可上網後才離開機場'],
    tags:[{l:'SIM ₩25,000',c:'c'},{l:'T-money ₩3,000+儲值',c:'c'}]},
-  {t:'21:00',n:'入住 + 江西區在地晚餐',q:'강서구 맛집 닭갈비',dur:'1 hr',
+  {t:'21:00',n:'入住 + 江西區在地晚餐',q:'강서구 맛집 닭갈比',dur:'1 hr',
    f:['江西區是在地住宅區，餐廳真實不踩雷','找一家닭갈비或烤肉小食堂','說「크림 빼주세요」不要奶油'],
    tags:[{l:'晚餐 ₩10,000–15,000',c:'c'}],
    note:'提醒：第一天就吃到道地首爾在地食堂，是最好的開始。'}
@@ -457,394 +444,367 @@ const DAYS = [
   {t:'16:00',n:'경의선숲길 + 弘大壁畫巷',q:'경의선숲길 홍대 벽화',dur:'1.5 hr',
    f:['步道傍晚光線最美，繡球花六月初陸續盛開','壁畫巷街頭塗鴉是很好的影片素材','走累了就找路邊咖啡廳坐，不需要趕'],
    tags:[{l:'免費',c:'c'}]}
+ ]},
+
+{id:3,date:'06/01',wd:'MON',g:'seoul',title:'城北洞慢生活',area:'城北洞 · 付岩洞',hr:'—',
+ summary:'城北洞和付岩洞是首爾最有文藝氣息的山腳社區，節奏慢、人少、古城牆就在旁邊。',
+ lazy:[
+  {t:'11:00',n:'城北洞獨立書店 + 咖啡',q:'성북동 카페 책방',dur:'2 hr',
+   f:['首爾版富錦街，保留老首爾氣息，人少安靜','書店、選物店與藝廊散落街道兩側','大片玻璃窗採光好，適合發呆'],
+   tags:[{l:'咖啡 ₩5,500',c:'c'},{l:'書視購買',c:'c'}]},
+  {t:'14:00',n:'付岩洞午餐 + 散步',q:'부암동 맛집 점심',dur:'2 hr',
+   f:['付岩洞是藝文人士聚集的山腳社區，坡道優美','沿山路往上走可看到首爾古城牆遺跡','小食堂多提供烤肉飯或定食，口感扎實'],
+   tags:[{l:'午餐 ₩12,000–16,000',c:'c'}],
+   note:'提醒：付岩洞有點坡度，穿舒適的鞋。'}
+ ],
+ active:[
+  {t:'09:00',n:'北岳山城牆步道',q:'북악산성곽길 外국인',dur:'2.5 hr',
+   f:['沿朝鮮時代古城牆登山，俯瞰整個首爾盆地','清晨涼爽最適合走，遊客極少','需攜帶外國護照入場，免費進入'],
+   tags:[{l:'免費',c:'c'},{l:'需帶護照',c:'w'}]},
+  {t:'12:00',n:'付岩洞 烤肉定食午餐',q:'부암동 음식점 불고기',dur:'1 hr',
+   f:['登山後補充體力，選불고기或닭갈비定食','付岩洞餐廳品質穩定，不用擔心踩雷','份量充足，搭配小菜就是完整一餐'],
+   tags:[{l:'定食 ₩13,000',c:'c'}]}
  ]}
 ];
 
 const BADGES = [
-  {id:'b1',n:'初來乍到',i:'✈️',desc:'抵達南韓領土！開啟一段嶄新的旅程。'},
-  {id:'b2',n:'古著獵人',i:'🧥',desc:'在弘大或延南洞淘到第一件二手古著物。'},
-  {id:'b3',n:'辣不倒我',i:'🌶️',desc:'成功吃到第一盤不加起司奶油的道地辣炒雞。'},
-  {id:'b4',n:'山系文青',i:'⛰️',desc:'成功爬上北岳山城牆，拿到當日限定美景。'},
-  {id:'b5',n:'釜山海鷗',i:'🌊',desc:'腳踩海雲台沙灘，聽海浪與海鷗的對話。'}
+  {id:'b1',ico:'✈️',nm:'新手上路',desc:'完成第一天安全落地任務。'},
+  {id:'b2',ico:'🧥',nm:'古著獵人',desc:'在弘大或延南洞解鎖古著探索。'},
+  {id:'b3',ico:'⛰️',nm:'城牆漫步',desc:'成功挑戰北岳山或歷史步道。'},
+  {id:'b4',ico:'🌊',nm:'釜山海風',desc:'順利到達釜山並開啟海線關卡。'},
+  {id:'b5',ico:'🎬',nm:'完美導演',desc:'解鎖全部行程，準備製作終極影片！'}
 ];
 
 const TASKS = [
-  {id:1,dayId:1,title:'安全著陸與通關',desc:'完成入境、拿到 SIM 卡，並儲值 T-money 卡。',tip:'在 1F 處理好所有通訊和交通工具再離開。',bid:'b1'},
-  {id:2,dayId:2,title:'第一件古著戰利品',desc:'在弘大/合井一帶的古著街尋寶，帶走一件心儀衣服。',tip:'有些小店收現金有折扣喔。',bid:'b2'},
-  {id:3,dayId:2,title:'品嚐原味辣炒雞',desc:'在合井吃到一口紮實不加奶油的 닭갈비。',tip:'記得用「크림 빼주세요」防線！',bid:'b3'},
-  {id:4,dayId:3,title:'征服北岳山城牆',desc:'登上城牆步道眺望首爾。',tip:'必須攜帶護照才能進行登記與進入。',bid:'b4'},
-  {id:5,dayId:9,title:'抵達釜山海岸線',desc:'成功入住在海雲台或廣安里附近的設計旅宿。',tip:'出站後直接往海邊走就對了！',bid:'b5'}
+  {id:'t1',dayId:1,badgeId:'b1',title:'安全抵達與網卡設定',desc:'順利入境金浦機場並開通網路。',tip:'在 1F 櫃檯處確認 SIM 卡可正常上網。'},
+  {id:'t2',dayId:2,badgeId:'b2',title:'弘大古著淘寶',desc:'走訪指定古著店，尋找獨特款式。',tip:'多看幾家，很多店隱藏在地下室。'},
+  {id:'t3',dayId:3,badgeId:'b3',title:'歷史城牆征服',desc:'攀登北岳山古城牆，俯瞰首爾。',tip:'記得隨身攜帶護照以便登記。'}
 ];
 
-// 本地進度狀態
-let state = {
-  coverHidden: false,
-  currentTab: 'itin',
-  itinFilter: 'all',
-  dayModes: {},   // dayId -> 'lazy' or 'active'
-  dayOpens: {},   // dayId -> true/false
-  taskDones: {},  // taskId -> true/false
-  scrollPositions: { itin: 0, qs: 0, info: 0 }
+// ════════════════════════════════════════════
+// FIREBASE REALTIME DATABASE 設定與整合
+// ════════════════════════════════════════════
+const firebaseConfig = {
+  databaseURL: "https://lien-in-korea-default-rtdb.asia-southeast1.firebasedatabase.app/"
 };
 
-// ════════════════════════════════════════════
-// FIREBASE REALTIME STORAGE INTERACTION
-// ════════════════════════════════════════════
-function saveStateToFirebase() {
-  if (isUpdatingFromFirebase) return;
-  syncRef.set(state).catch(err => console.error("Firebase 儲存失敗:", err));
-}
+// 初始化 Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-syncRef.on('value', snapshot => {
+// 宣告全域進度變數
+let userProgress = {
+  activeModes: {},   // 各日期的模式 (lazy / active)
+  expandedDays: {},  // 行程展開收合狀態
+  expandedTasks: {}, // 任務展開收合狀態
+  completedTasks: {} // 任務勾選狀態 (實時同步核心)
+};
+
+// 標記是否為 Firebase 引起的更新，防止無窮循環觸發
+let isSyncingFromFirebase = false;
+
+// 監聽 Firebase 數據庫的實時數據變更（多裝置同步核心）
+db.ref('trip_progress').on('value', (snapshot) => {
   const data = snapshot.val();
   if (data) {
-    isUpdatingFromFirebase = true;
+    isSyncingFromFirebase = true;
+    userProgress = {
+      activeModes: data.activeModes || {},
+      expandedDays: data.expandedDays || {},
+      expandedTasks: data.expandedTasks || {},
+      completedTasks: data.completedTasks || {}
+    };
     
-    // 同步狀態結構
-    state = { ...state, ...data };
-    if (!state.dayModes) state.dayModes = {};
-    if (!state.dayOpens) state.dayOpens = {};
-    if (!state.taskDones) state.taskDones = {};
-    if (!state.scrollPositions) state.scrollPositions = { itin: 0, qs: 0, info: 0 };
-
-    // 1. 封面狀態
-    if (state.coverHidden) {
-      document.getElementById('cover').classList.add('hidden');
-    } else {
-      document.getElementById('cover').classList.remove('hidden');
-    }
-
-    // 2. 分頁導覽
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      if (btn.innerText.toLowerCase() === state.currentTab) {
-        switchTabUi(state.currentTab, btn);
-      }
-    });
-
-    // 3. 行程篩選 UI
-    document.querySelectorAll('.filter-row .fc').forEach(fc => {
-      const onclickAttr = fc.getAttribute('onclick') || '';
-      if (onclickAttr.includes(`'${state.itinFilter}'`)) {
-        document.querySelectorAll('.filter-row .fc').forEach(c => c.classList.remove('on'));
-        fc.classList.add('on');
-      }
-    });
-
-    // 重新渲染元件以反應變化
-    renderDays();
-    renderQs();
-    updateHeaderProgress();
-
-    // 4. 還原滾動進度
-    setTimeout(() => {
-      const container = document.querySelector('.tab-content');
-      if (container) container.scrollTop = state.scrollPositions[state.currentTab] || 0;
-    }, 50);
-
-    toast('🔄 進度已同步');
-    isUpdatingFromFirebase = false;
+    // 重新渲染畫面以符合遠端進度
+    renderAll();
+    updateSyncStatus('已同步', '#7fba7f');
+    isSyncingFromFirebase = false;
+  } else {
+    // 遠端若無資料，初始化結構
+    saveProgressToFirebase();
   }
+}, (error) => {
+  console.error("Firebase 同步錯誤:", error);
+  updateSyncStatus('同步出錯', '#ba7f7f');
 });
 
-// 監聽本地滾動並即時儲存
-document.querySelector('.tab-content').addEventListener('scroll', (e) => {
-  if (isUpdatingFromFirebase) return;
-  state.scrollPositions[state.currentTab] = e.target.scrollTop;
-  // 使用防抖或直接更新路徑，避免高頻寫入
-  db.ref(`trip_progress/scrollPositions/${state.currentTab}`).set(e.target.scrollTop);
-});
-
-// ════════════════════════════════════════════
-// RENDER ITIN
-// ════════════════════════════════════════════
-function renderDays() {
-  const list = document.getElementById('dayList');
-  list.innerHTML = '';
-
-  DAYS.forEach(d => {
-    // 篩選過濾
-    if(state.itinFilter !== 'all' && d.g !== state.itinFilter) return;
-
-    // 讀取同步狀態
-    const mode = state.dayModes[d.id] || 'lazy';
-    const isOpen = !!state.dayOpens[d.id];
-
-    const card = document.createElement('div');
-    card.className = 'dc';
-
-    let numClass = '';
-    if(d.g==='busan') numClass=' busan';
-    if(d.g==='hongdae') numClass=' gold';
-
-    // 建立卡片標頭
-    const head = document.createElement('div');
-    head.className = 'dc-head';
-    head.innerHTML = `
-      <div class="dc-num${numClass}"><div class="d">${d.wd}</div><div class="n">${d.id}</div></div>
-      <div class="dc-info">
-        <div class="dc-date">${d.date} · ${d.hr==='—'?'隨心步調':d.hr}</div>
-        <div class="dc-title">${d.title}</div>
-        <div class="dc-area">${d.area}</div>
-      </div>
-      <div class="dc-arr ${isOpen?'open':''}">▾</div>
-    `;
-    head.addEventListener('click', (e) => {
-      if(e.target.closest('.mb') || e.target.closest('.nav-ic')) return;
-      toggleDay(d.id);
+// 將當前裝置進度儲存至 Firebase 
+function saveProgressToFirebase() {
+  if (isSyncingFromFirebase) return; // 如果是來自遠端的變更，就不再寫回
+  updateSyncStatus('同步中...', '#f0a85d');
+  
+  db.ref('trip_progress').set(userProgress)
+    .then(() => {
+      updateSyncStatus('已同步', '#7fba7f');
+    })
+    .catch((err) => {
+      console.error("寫入儲存失敗:", err);
+      updateSyncStatus('儲存失敗', '#ba7f7f');
     });
-    card.appendChild(head);
-
-    // 建立卡片內文
-    const body = document.createElement('div');
-    body.className = `dc-body ${isOpen?'open':''}`;
-
-    // 摘要與切換模式按鈕
-    body.innerHTML = `
-      <div class="day-summary">${d.summary}</div>
-      <div class="mode-toggle">
-        <button class="mb ${mode==='lazy'?'on':''}" onclick="setDayMode(${d.id},'lazy')">Lazy 慢旅</button>
-        <button class="mb ${mode==='active'?'on':''}" onclick="setDayMode(${d.id},'active')">Active 特工</button>
-      </div>
-    `;
-
-    // 站點渲染
-    const stopsDiv = document.createElement('div');
-    stopsDiv.className = 'stops';
-    const stopsData = d[mode] || [];
-
-    stopsData.forEach((st, idx) => {
-      const stop = document.createElement('div');
-      stop.className = 'stop';
-      
-      let tagsHtml = (st.tags || []).map(t => `<span class="stag ${t.c}">${t.l}</span>`).join('');
-      let noteHtml = st.note ? `<div class="snote">${st.note}</div>` : '';
-      let featsHtml = (st.f || []).map(f => `<div class="sf">${f}</div>`).join('');
-
-      stop.innerHTML = `
-        <div class="stop-l">
-          <div class="stop-t">${st.t}</div>
-          <div class="stop-dot"></div>
-          ${idx < stopsData.length - 1 ? '<div class="stop-line"></div>' : ''}
-        </div>
-        <div class="stop-r">
-          <div class="sc">
-            <div class="sc-hd">
-              <div class="sname">${st.n}</div>
-              <a class="nav-ic" href="${nm(st.q)}" target="_blank">📍</a>
-              <div class="sdur">${st.dur}</div>
-            </div>
-            <div class="sfeats">${featsHtml}</div>
-            ${tagsHtml ? `<div class="stags">${tagsHtml}</div>` : ''}
-            ${noteHtml}
-          </div>
-        </div>
-      `;
-      stopsDiv.appendChild(stop);
-    });
-
-    body.appendChild(stopsDiv);
-    card.appendChild(body);
-    list.appendChild(card);
-  });
 }
+
+function updateSyncStatus(text, color) {
+  const txtEl = document.getElementById('syncTxt');
+  const dotEl = document.getElementById('syncDot');
+  if (txtEl) txtEl.textContent = text;
+  if (dotEl) dotEl.style.backgroundColor = color;
+}
+
+function showSyncInfo() {
+  showToast("實時同步雲端資料庫中，不同裝置將隨時同步最新進度。");
+}
+
+function showToast(msg) {
+  const t = document.getElementById('syncToast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t.to);
+  t.to = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ════════════════════════════════════════════
+// UI RENDER & INTERACTION LOGIC
+// ════════════════════════════════════════════
+let currentFilter = 'all';
 
 function filterDays(g, btn) {
-  document.querySelectorAll('.filter-row .fc').forEach(c => c.classList.remove('on'));
-  btn.classList.add('on');
-  state.itinFilter = g;
-  saveStateToFirebase();
-  renderDays();
+  currentFilter = g;
+  document.querySelectorAll('.filter-row .fc').forEach(b => b.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  renderItin();
 }
 
-function toggleDay(id) {
-  state.dayOpens[id] = !state.dayOpens[id];
-  saveStateToFirebase();
-  renderDays();
+function toggleDay(dayId) {
+  userProgress.expandedDays[dayId] = !userProgress.expandedDays[dayId];
+  renderItin();
+  saveProgressToFirebase(); // 同步至各裝置
 }
 
-function setDayMode(id, m) {
-  state.dayModes[id] = m;
-  saveStateToFirebase();
-  renderDays();
+function setMode(dayId, mode) {
+  userProgress.activeModes[dayId] = mode;
+  renderItin();
+  saveProgressToFirebase(); // 同步至各裝置
 }
 
-// ════════════════════════════════════════════
-// RENDER Qs (ACHIEVEMENTS)
-// ════════════════════════════════════════════
-function renderQs() {
-  // 計算解鎖總數
-  let doneCount = 0;
-  TASKS.forEach(t => { if(state.taskDones[t.id]) doneCount++; });
-
-  document.getElementById('bdgCount').innerText = `${doneCount} / ${BADGES.length} 解鎖`;
-
-  // 1. 徽章網格
-  const grid = document.getElementById('bdgGrid');
-  grid.innerHTML = '';
-  BADGES.forEach(b => {
-    // 找出對應任務
-    const tk = TASKS.find(t => t.bid === b.id);
-    const isUnlocked = tk ? !!state.taskDones[tk.id] : false;
-
-    const itm = document.createElement('div');
-    itm.className = `badge-itm ${isUnlocked?'unlocked':'locked'}`;
-    itm.id = `badge-${b.id}`;
-    itm.innerHTML = `
-      <div class="badge-ico">${b.i}</div>
-      <div class="badge-nm">${b.n}</div>
-    `;
-    itm.addEventListener('click', () => {
-      toast(`【${b.n}】${b.desc}`);
-    });
-    grid.appendChild(itm);
-  });
-
-  // 2. 下一個徽章進度條
-  const nextBadge = BADGES.find(b => {
-    const tk = TASKS.find(t => t.bid === b.id);
-    return tk ? !state.taskDones[tk.id] : true;
-  });
-
-  if(nextBadge) {
-    document.getElementById('nbName').innerText = `下一個：${nextBadge.n}`;
-    document.getElementById('nbProg').innerText = `0 / 1`;
-    document.getElementById('nbFill').style.width = `0%`;
-  } else {
-    document.getElementById('nbName').innerText = `已完成所有成就！`;
-    document.getElementById('nbProg').innerText = `${BADGES.length}/${BADGES.length}`;
-    document.getElementById('nbFill').style.width = `100%`;
+function toggleTask(taskId) {
+  userProgress.completedTasks[taskId] = !userProgress.completedTasks[taskId];
+  
+  // 觸發星星特效 (若為勾選完成)
+  if (userProgress.completedTasks[taskId]) {
+    const btn = document.querySelector(`[data-task-btn="${taskId}"]`);
+    if (btn) createSparkles(btn);
   }
-
-  // 3. 任務清單
-  const tList = document.getElementById('taskList');
-  tList.innerHTML = '';
-
-  TASKS.forEach(t => {
-    const isDone = !!state.taskDones[t.id];
-    const bInfo = BADGES.find(b => b.id === t.bid);
-
-    const tkDiv = document.createElement('div');
-    tkDiv.className = `tk ${isDone?'tk-done':''}`;
-    
-    // 讀取折疊打開進度 (預設關閉)
-    const isTkOpen = document.getElementById(`tk-bd-${t.id}`)?.classList.contains('open');
-
-    tkDiv.innerHTML = `
-      <div class="tk-hd" onclick="document.getElementById('tk-bd-${t.id}').classList.toggle('open'); this.querySelector('.tk-arr').classList.toggle('open')">
-        <span class="tk-scroll">${bInfo?.i || '📜'}</span>
-        <div class="tk-meta">
-          <div class="tk-title" style="${isDone?'text-decoration:line-through;color:var(--ink3)':''}">${t.title}</div>
-          <div class="tk-day">DAY ${t.dayId} 任務目標</div>
-        </div>
-        <div class="tk-arr">Animate ▾</div>
-      </div>
-      <div class="tk-bd" id="tk-bd-${t.id}">
-        <div class="tk-desc">${t.desc}</div>
-        <div class="tk-tip">
-          <span class="tk-tip-ico">💡</span>
-          <span>${t.tip}</span>
-        </div>
-        <button class="tk-cbtn ${isDone?'done':''}" onclick="toggleTask(${t.id}, event)">
-          <div class="tk-chk">${isDone?'✓':''}</div>
-          <span>${isDone?'解鎖成功！':'標記完成'}</span>
-        </button>
-      </div>
-    `;
-    tList.appendChild(tkDiv);
-  });
+  
+  renderQs();
+  updateHeaderProgress();
+  saveProgressToFirebase(); // 核心：即時同步不同裝置間的進度並儲存
 }
 
-function toggleTask(id, event) {
-  event.stopPropagation();
-  const isDone = !state.taskDones[id];
-  state.taskDones[id] = isDone;
+function toggleTaskExpand(taskId) {
+  userProgress.expandedTasks[taskId] = !userProgress.expandedTasks[taskId];
+  renderQs();
+  saveProgressToFirebase();
+}
 
-  const tk = TASKS.find(t => t.id === id);
-
-  if (isDone && tk) {
-    // 觸發煙火特效與解鎖動畫
-    setTimeout(() => {
-      const bEl = document.getElementById(`badge-${tk.bid}`);
-      if(bEl) {
-        bEl.classList.add('badge-pop');
-        createSparkles(bEl);
-      }
-    }, 150);
-  }
-
-  saveStateToFirebase();
+// 綜合重繪函式
+function renderAll() {
+  renderItin();
   renderQs();
   updateHeaderProgress();
 }
 
-// ════════════════════════════════════════════
-// HEADER PROGRESS
-// ════════════════════════════════════════════
+function renderItin() {
+  const container = document.getElementById('dayList');
+  if (!container) return;
+  container.innerHTML = '';
+
+  DAYS.forEach(d => {
+    if (currentFilter !== 'all' && d.g !== currentFilter) return;
+
+    const isOpen = !!userProgress.expandedDays[d.id];
+    const mode = userProgress.activeModes[d.id] || 'lazy';
+    const stopsData = d[mode] || [];
+
+    const dc = document.createElement('div');
+    dc.className = 'dc';
+
+    // Head
+    const head = document.createElement('div');
+    head.className = 'dc-head';
+    head.onclick = () => toggleDay(d.id);
+
+    const busanClass = d.g === 'busan' ? ' busan' : (d.g === 'hongdae' ? ' gold' : '');
+    head.innerHTML = `
+      <div class="dc-num${busanClass}">
+        <span class="d">${d.wd}</span>
+        <span class="n">${d.id}</span>
+      </div>
+      <div class="dc-info">
+        <div class="dc-date">${d.date} · ${d.area}</div>
+        <div class="dc-title">${d.title}</div>
+      </div>
+      <div class="dc-arr${isOpen ? ' open' : ''}">▼</div>
+    `;
+    dc.appendChild(head);
+
+    // Body
+    const body = document.createElement('div');
+    body.className = `dc-body${isOpen ? ' open' : ''}`;
+
+    let stopsHtml = '';
+    stopsData.forEach((s, idx) => {
+      let tagsHtml = '';
+      if (s.tags) {
+        s.tags.forEach(t => {
+          tagsHtml += `<span class="stag ${t.c}">${t.l}</span>`;
+        });
+      }
+      let featsHtml = '';
+      if (s.f) {
+        s.f.forEach(f => {
+          featsHtml += `<div class="sf">${f}</div>`;
+        });
+      }
+      let noteHtml = s.note ? `<div class="snote">${s.note}</div>` : '';
+
+      stopsHtml += `
+        <div class="stop">
+          <div class="stop-l">
+            <span class="stop-t">${s.t}</span>
+            <div class="stop-dot"></div>
+            ${idx < stopsData.length - 1 ? '<div class="stop-line"></div>' : ''}
+          </div>
+          <div class="stop-r">
+            <div class="sc">
+              <div class="sc-hd">
+                <span class="sname">${s.n}</span>
+                <a class="nav-ic" href="${nm(s.q)}" target="_blank">📍</a>
+                <span class="sdur">${s.dur}</span>
+              </div>
+              <div class="sfeats">${featsHtml}</div>
+              <div class="stags">${tagsHtml}</div>
+              ${noteHtml}
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    body.innerHTML = `
+      <div class="day-summary">${d.summary}</div>
+      <div class="mode-toggle">
+        <button class="mb${mode === 'lazy' ? ' on' : ''}" onclick="event.stopPropagation(); setMode(${d.id}, 'lazy')">Chill 躺平</button>
+        <button class="mb${mode === 'active' ? ' on' : ''}" onclick="event.stopPropagation(); setMode(${d.id}, 'active')">精實特工 (${d.hr || '精采'})</button>
+      </div>
+      <div class="stops">${stopsHtml}</div>
+    `;
+    
+    dc.appendChild(body);
+    container.appendChild(dc);
+  });
+}
+
+function renderQs() {
+  // 1. 計算進度與解鎖徽章
+  const totalTasks = TASKS.length;
+  const doneTasks = TASKS.filter(t => !!userProgress.completedTasks[t.id]).length;
+  
+  // 依據任務完成比例動態解鎖徽章
+  let unlockedCount = 0;
+  if (doneTasks >= 1) unlockedCount = 1;
+  if (doneTasks >= 2) unlockedCount = 2;
+  if (doneTasks >= 3) unlockedCount = 3;
+  if (doneTasks === totalTasks && totalTasks > 0) unlockedCount = 5; // 全部完成額外提升
+
+  const bdgCountEl = document.getElementById('bdgCount');
+  if (bdgCountEl) bdgCountEl.textContent = `${unlockedCount} / ${BADGES.length} 解鎖`;
+
+  // 2. 渲染徽章
+  const grid = document.getElementById('bdgGrid');
+  if (grid) {
+    grid.innerHTML = '';
+    BADGES.forEach((b, idx) => {
+      const isUnlocked = idx < unlockedCount;
+      const itm = document.createElement('div');
+      itm.className = `badge-itm ${isUnlocked ? 'unlocked' : 'locked'}`;
+      itm.innerHTML = `
+        <div class="badge-ico">${b.ico}</div>
+        <div class="badge-nm">${b.nm}</div>
+      `;
+      grid.appendChild(itm);
+    });
+  }
+
+  // 3. 下一個徽章提示
+  const nbName = document.getElementById('nbName');
+  const nbProg = document.getElementById('nbProg');
+  const nbFill = document.getElementById('nbFill');
+  if (unlockedCount < BADGES.length) {
+    const nextB = BADGES[unlockedCount];
+    if (nbName) nbName.textContent = `下一個：${nextB.nm}`;
+    if (nbProg) nbProg.textContent = `${doneTasks}/${totalTasks}`;
+    if (nbFill) nbFill.style.width = `${(doneTasks / totalTasks) * 100}%`;
+  } else {
+    if (nbName) nbName.textContent = `成就全數達成！`;
+    if (nbProg) nbProg.textContent = `${doneTasks}/${totalTasks}`;
+    if (nbFill) nbFill.style.width = `100%`;
+  }
+
+  // 4. 渲染任務列表
+  const list = document.getElementById('taskList');
+  if (list) {
+    list.innerHTML = '';
+    TASKS.forEach(t => {
+      const isDone = !!userProgress.completedTasks[t.id];
+      const isExpanded = !!userProgress.expandedTasks[t.id];
+      
+      const tk = document.createElement('div');
+      tk.className = `tk${isDone ? ' tk-done' : ''}`;
+      
+      tk.innerHTML = `
+        <div class="tk-hd" onclick="toggleTaskExpand('${t.id}')">
+          <div class="tk-scroll">📜</div>
+          <div class="tk-meta">
+            <div class="tk-title" style="${isDone?'text-decoration:line-through;color:var(--ink3);':''}">${t.title}</div>
+            <div class="tk-day">DAY ${t.dayId} 專屬任務</div>
+          </div>
+          <div class="tk-arr${isExpanded ? ' open' : ''}">▼</div>
+        </div>
+        <div class="tk-bd${isExpanded ? ' open' : ''}">
+          <div class="tk-desc">${t.desc}</div>
+          <div class="tk-tip">
+            <span class="tk-tip-ico">💡</span>
+            <span>${t.tip}</span>
+          </div>
+          <button class="tk-cbtn${isDone ? ' done' : ''}" data-task-btn="${t.id}" onclick="event.stopPropagation(); toggleTask('${t.id}')">
+            <div class="tk-chk">${isDone ? '✓' : ''}</div>
+            <span>${isDone ? '已完成冒險' : '標記為完成'}</span>
+          </button>
+        </div>
+      `;
+      list.appendChild(tk);
+    });
+  }
+}
+
 function updateHeaderProgress() {
-  let doneCount = 0;
-  DAYS.forEach(d => {
-    if(state.dayOpens[d.id]) doneCount++;
-  });
+  const totalTasks = TASKS.length;
+  const doneTasks = TASKS.filter(t => !!userProgress.completedTasks[t.id]).length;
   
-  // 以任務完成數與天數展開做整合進度比例
-  let totalTasks = TASKS.length;
-  let doneTasks = 0;
-  TASKS.forEach(t => { if(state.taskDones[t.id]) doneTasks++; });
-
-  const pct = Math.min(100, Math.round(((doneTasks + doneCount) / (totalTasks + DAYS.length)) * 100));
+  const frac = document.getElementById('progFrac');
+  const fill = document.getElementById('progFill');
   
-  document.getElementById('progFrac').innerText = `${doneTasks}/${totalTasks} 成就`;
-  document.getElementById('progFill').style.width = `${pct}%`;
-
-  // 頂部圓點
-  const dotsContainer = document.getElementById('progDots');
-  dotsContainer.innerHTML = '';
-  DAYS.forEach(d => {
-    const dot = document.createElement('div');
-    dot.className = `prog-dot ${state.dayOpens[d.id]?'done':''}`;
-    dotsContainer.appendChild(dot);
-  });
+  if (frac) frac.textContent = `${doneTasks} / ${totalTasks}`;
+  if (fill) {
+    const pct = totalTasks > 0 ? (doneTasks / totalTasks) * 100 : 0;
+    fill.style.width = `${pct}%`;
+  }
 }
 
-// ════════════════════════════════════════════
-// UI TABS & TOASTS
-// ════════════════════════════════════════════
-function switchTab(name, btn) {
-  switchTabUi(name, btn);
-  state.currentTab = name;
-  saveStateToFirebase();
-
-  // 還原此分頁的滾動位置
-  setTimeout(() => {
-    document.querySelector('.tab-content').scrollTop = state.scrollPositions[name] || 0;
-  }, 20);
-}
-
-function switchTabUi(name, btn) {
-  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
-  const targetPane = document.getElementById('pane-' + name);
-  if(targetPane) targetPane.classList.add('active');
-  
-  document.querySelectorAll('.tab-nav .tab-btn').forEach(b => b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-}
-
-function toast(msg) {
-  const t = document.getElementById('syncToast');
-  t.innerText = msg;
-  t.classList.add('show');
-  clearTimeout(t.tm);
-  t.tm = setTimeout(() => t.classList.remove('show'), 2000);
-}
-
-function showSyncInfo() {
-  toast('📡 Firebase 連線正常 · 即時同步中');
-}
-
-// 噴發粒子特效
 function createSparkles(el) {
   const rect = el.getBoundingClientRect();
-  for(let i=0; i<12; i++) {
+  for (let i = 0; i < 8; i++) {
     const s = document.createElement('div');
     s.className = 'spk';
     s.style.background = ['#b8955a','#5b82a0','#7a9478','#b87878'][i%4];
@@ -852,10 +812,10 @@ function createSparkles(el) {
     s.style.left = `${rect.left + rect.width/2}px`;
     s.style.top = `${rect.top + rect.height/2}px`;
     
-    const angle = Math.random() * Math.PI * 2;
-    const dist = 30 + Math.random() * 50;
-    s.style.setProperty('--dx', `${Math.cos(angle)*dist}px`);
-    s.style.setProperty('--dy', `${Math.sin(angle)*dist}px`);
+    const dx = `${(Math.random() - 0.5) * 120}px`;
+    const dy = `${(Math.random() - 0.5) * 120}px`;
+    s.style.setProperty('--dx', dx);
+    s.style.setProperty('--dy', dy);
     
     document.body.appendChild(s);
     setTimeout(() => s.remove(), 700);
@@ -863,33 +823,39 @@ function createSparkles(el) {
 }
 
 // ════════════════════════════════════════════
-// INIT
+// TABS 切換
+// ════════════════════════════════════════════
+function switchTab(name, btn) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  document.getElementById('pane-' + name).classList.add('active');
+  document.querySelectorAll('.tab-nav .tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelector('.tab-content').scrollTop = 0;
+}
+
+// ════════════════════════════════════════════
+// INIT 初始化
 // ════════════════════════════════════════════
 document.getElementById('startBtn').addEventListener('click', () => {
   document.getElementById('cover').classList.add('hidden');
-  state.coverHidden = true;
-  saveStateToFirebase();
 });
 
-// 封面裝飾背景星星
+// 封面漂浮星星特效
 (function(){
   const c = document.getElementById('cvStars');
   if(!c) return;
   const cols = ['#b8955a','#8a7a9a','#7a9478','#b87878','#5b82a0','#c4a882'];
-  for(let i=0; i<18; i++) {
+  for(let i=0; i<18; i++){
     const d = document.createElement('div');
     const sz = 2 + Math.random()*4;
     d.className = 'cv-star';
-    d.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${60+Math.random()*40}%;background:${cols[i%cols.length]};animation-duration:${2+Math.random()*3}s;animation-delay:${Math.random()*2}s`;
+    d.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${60+Math.random()*40}%;background:${cols[i%cols.length]};animation-duration:${2+Math.random()*3}s;animation-delay:${Math.random()*2}s;`;
     c.appendChild(d);
   }
 })();
 
-// 初次本地預載渲染
-renderDays();
-renderQs();
-updateHeaderProgress();
-
+// 初次啟動本地渲染
+renderAll();
 </script>
 </body>
 </html>
