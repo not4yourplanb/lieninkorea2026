@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="theme-color" content="#eef4f8">
-    <title>蓮의 韓國獨旅 2026 實時同步 Web</title>
+    <title>韓國獨旅 2026 實時同步 Web</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,19 +14,19 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <style>
-        /* ── 變數系統：莫蘭迪色系與優雅灰調 ──────────────────────── */
+        /* ── 變數系統：莫蘭迪色調、優雅與活潑兼具 ──────────────────────── */
         :root {
-            --bg-base: #f4f7f9;        /* 暖透藍白（如莫蘭迪海風） */
-            --bg-card: #fdfcf9;        /* 白練色卡片 */
-            --bg-card-inner: #f0f4f7;  /* 浪花淡藍內框 */
+            --bg-base: #f4f7f9;        /* 暖透藍白（莫蘭迪海風灰藍） */
+            --bg-card: #fdfcf9;        /* 白練色卡片襯底 */
+            --bg-card-inner: #f0f4f7;  /* 浪花淡藍內襯框 */
             --m-blue: #4a6984;         /* 深海莫蘭迪藍 (主色) */
             --m-blue-light: #e3ecf2;   /* 淺透海藍 */
             --sea-aqua: #7ca5b8;       /* 活潑浪花綠藍 */
             --ink-black: #2c3338;      /* 炭灰黑 */
             --ink-grey: #6c757d;       /* 暖灰襯字 */
             --border-line: #d2daf0;    /* 淡淡海浪線 */
-            --gold-accent: #c4a47c;    /* 沙灘金微光 */
-            --r-main: 16px;            /* 圓角半徑 */
+            --gold-accent: #c4a47c;    /* 沙灘金微光（打勾特效） */
+            --r-main: 16px;            /* 方圓角半徑 */
             --r-sub: 8px;
         }
 
@@ -85,7 +85,6 @@
         #content-page { display: none; padding-bottom: 90px; }
         #content-page.visible { display: block; }
 
-        /* 頂部導覽列 */
         .app-bar {
             background-color: var(--bg-card); border-bottom: 1px solid var(--border-line);
             padding: 16px 20px; position: sticky; top: 0; z-index: 100;
@@ -106,13 +105,13 @@
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(82, 196, 26, 0); }
         }
 
-        /* 全域進度條 */
+        /* 全域分母 15 天進度條 */
         .progress-section { background-color: var(--bg-card); padding: 10px 20px; border-bottom: 1px solid var(--border-line); }
         .progress-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; margin-bottom: 5px; }
         .progress-bar-container { width: 100%; height: 6px; background-color: var(--bg-card-inner); border-radius: 10px; overflow: hidden; }
         .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--m-blue), var(--sea-aqua)); transition: width 0.5s ease-out; }
 
-        /* 行程地區分類選單 */
+        /* 行程地區分類四選單 */
         .category-nav { display: flex; gap: 8px; padding: 12px 20px; overflow-x: auto; scrollbar-width: none; }
         .category-nav::-webkit-scrollbar { display: none; }
         .cat-btn {
@@ -122,7 +121,7 @@
         }
         .cat-btn.active { background-color: var(--m-blue); color: var(--bg-card); border-color: var(--m-blue); font-weight: 500; }
 
-        /* 主要卡片容器與架構 */
+        /* 主要卡片架構 */
         .container { max-width: 600px; margin: 0 auto; padding: 0 16px; display: none; }
         .container.active { display: block; animation: fadeIn 0.4s ease; }
 
@@ -130,11 +129,10 @@
             margin: 20px 0 6px; font-family: 'Noto Serif TC', serif; font-size: 1.05rem;
             color: var(--m-blue); font-weight: 700; display: flex; flex-direction: column; gap: 2px;
         }
-        .date-title-top { display: flex; align-items: center; gap: 6px; }
-        .date-sub-info { font-family: 'Noto Sans TC', sans-serif; font-size: 0.78rem; color: var(--ink-grey); font-weight: 400; margin-left: 24px; }
+        .date-sub-info { font-size: 0.78rem; color: var(--ink-grey); font-family: 'Noto Sans TC', sans-serif; font-weight: 400; }
         
-        .mode-toggle-group { display: flex; background: var(--border-line); border-radius: var(--r-sub); padding: 2px; margin-bottom: 12px; max-width: 160px; margin-left: 24px; }
-        .mode-btn { flex: 1; text-align: center; font-size: 0.75rem; padding: 4px 0; cursor: pointer; border-radius: 6px; color: var(--ink-grey); transition: all 0.2s; }
+        .mode-toggle-group { display: flex; background: var(--border-line); border-radius: var(--r-sub); padding: 2px; margin-bottom: 12px; max-width: 150px; }
+        .mode-btn { flex: 1; text-align: center; font-size: 0.75rem; padding: 4px 0; cursor: pointer; border-radius: 6px; color: var(--ink-grey); }
         .mode-btn.active { background: var(--bg-card); color: var(--m-blue); font-weight: 500; }
 
         .card {
@@ -143,59 +141,57 @@
             box-shadow: 0 4px 12px rgba(74, 105, 132, 0.03);
         }
 
-        /* 行程點節點 */
+        /* 行程節點樣式（左側地圖、右側時間） */
         .spot-node { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 0; border-bottom: 1px dashed var(--border-line); }
         .spot-node:last-of-type { border-bottom: none; }
         .spot-left { display: flex; gap: 12px; align-items: flex-start; width: 82%; }
-        .nav-anchor { font-size: 1.2rem; color: var(--sea-aqua); cursor: pointer; padding-top: 1px; transition: transform 0.2s; }
+        .nav-anchor { font-size: 1.2rem; color: var(--sea-aqua); cursor: pointer; padding-top: 1px; transition: transform 0.2s; text-decoration: none; }
         .nav-anchor:hover { transform: scale(1.2); }
-        
-        .spot-mid-time { font-size: 0.75rem; font-weight: 700; color: var(--gold-accent); margin-bottom: 2px; display: block; }
-        .spot-mid h4 { font-size: 0.92rem; font-weight: 700; color: var(--ink-black); margin-bottom: 6px; }
+        .spot-mid h4 { font-size: 0.92rem; font-weight: 500; color: var(--ink-black); margin-bottom: 4px; }
         .spot-desc-list { list-style: none; }
-        .spot-desc-list li { font-size: 0.8rem; color: var(--ink-grey); margin-bottom: 4px; line-height: 1.45; text-align: justify; }
-        .spot-desc-list li::before { content: "• "; color: var(--sea-aqua); font-weight: bold; }
-        .spot-right-time { font-size: 0.75rem; color: var(--ink-grey); text-align: right; white-space: nowrap; background: var(--bg-base); padding: 2px 6px; border-radius: 4px; }
+        .spot-desc-list li { font-size: 0.8rem; color: var(--ink-grey); margin-bottom: 2px; line-height: 1.4; }
+        .spot-desc-list li::before { content: "• "; color: var(--sea-aqua); }
+        .spot-right-time { font-size: 0.75rem; color: var(--ink-grey); text-align: right; white-space: nowrap; padding-top: 2px; }
 
-        .lazy-summary-text { font-size: 0.88rem; color: var(--ink-black); margin-bottom: 10px; text-align: justify; padding-left: 4px; border-left: 3px solid var(--sea-aqua); }
+        .lazy-summary-text { font-size: 0.85rem; color: var(--ink-black); margin-bottom: 8px; }
         .lazy-note-box { background-color: var(--bg-card-inner); border-radius: var(--r-sub); padding: 10px; font-size: 0.78rem; color: var(--ink-grey); }
         
-        /* 費用項目方框 */
-        .price-tag-wrapper { margin-top: 12px; background-color: #fdfaf4; border: 1px dashed var(--gold-accent); border-radius: var(--r-sub); padding: 10px; }
-        .price-badge-title { font-size: 0.75rem; color: var(--gold-accent); font-weight: 700; margin-bottom: 2px; }
-        .price-badge-content { font-size: 0.78rem; color: var(--ink-black); }
+        /* 費用小提醒方框 */
+        .price-tag-wrapper { display: flex; justify-content: flex-end; margin-top: 8px; }
+        .price-badge { font-size: 0.75rem; background-color: var(--bg-card-inner); border: 1px dashed var(--sea-aqua); color: var(--m-blue); padding: 6px 12px; border-radius: var(--r-sub); font-weight: 400; text-align: right; line-height: 1.4; }
 
-        /* ── Qs: 任務與進度徽章 ──────────────────────── */
+        /* ── Qs: 任務與 5 個徽章成就 ──────────────────────── */
         .badge-status-box { background-color: var(--bg-card); border-radius: var(--r-main); border: 1px solid var(--border-line); padding: 14px; margin-bottom: 16px; margin-top: 15px;}
         .badge-status-text { font-size: 0.8rem; color: var(--ink-black); font-weight: 500; margin-bottom: 6px; }
-        .badge-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 12px; }
+        .badge-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 12px; }
         .badge-item-card { background-color: var(--bg-card-inner); border-radius: var(--r-sub); padding: 8px 2px; text-align: center; filter: grayscale(1); opacity: 0.4; transition: all 0.3s ease; }
-        .badge-item-card.unlocked { filter: grayscale(0); opacity: 1; background-color: var(--bg-card); border: 1px solid var(--border-line); box-shadow: 0 4px 10px rgba(196,164,124,0.15); }
-        .badge-icon { font-size: 1.3rem; margin-bottom: 2px; }
-        .badge-name { font-size: 0.68rem; font-weight: 700; color: var(--ink-black); scale: 0.9; }
-        .badge-date { font-size: 0.6rem; color: var(--gold-accent); margin-top: 2px; }
+        .badge-item-card.unlocked { filter: grayscale(0); opacity: 1; background-color: var(--bg-card); border: 1px solid var(--border-line); }
+        .badge-icon { font-size: 1.3rem; }
+        .badge-name { font-size: 0.65rem; font-weight: 500; transform: scale(0.9); }
 
         .task-card { background-color: var(--bg-card); border-radius: var(--r-main); border: 1px solid var(--border-line); margin-bottom: 10px; overflow: hidden; }
         .task-header-row { padding: 14px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .task-header-left { display: flex; align-items: center; gap: 10px; font-size: 0.88rem; width: 85%; }
-        .task-checkbox { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--m-blue); display: flex; align-items: center; justify-content: center; background: #fff; cursor: pointer; flex-shrink: 0; transition: background 0.2s; }
+        .task-header-left { display: flex; align-items: center; gap: 8px; font-size: 0.88rem; width: 85%; }
+        
+        /* 任務複選框：點擊可切換完成/恢復 */
+        .task-checkbox { width: 18px; height: 18px; border-radius: 4px; border: 1px solid var(--m-blue); display: flex; align-items: center; justify-content: center; background: #fff; cursor: pointer; flex-shrink: 0; }
         .task-checkbox.checked { background: var(--m-blue); border-color: var(--m-blue); }
-        .task-checkbox.checked::after { content: "✓"; color: #fff; font-size: 0.75rem; font-weight: bold; }
-        .task-header-title { font-weight: 500; color: var(--ink-black); }
+        .task-checkbox.checked::after { content: "✓"; color: #fff; font-size: 0.7rem; font-weight: bold; }
+        .task-header-title { font-weight: 500; }
         .task-header-title.checked-text { text-decoration: line-through; color: var(--ink-grey); }
-        .praise-toast { font-size: 0.75rem; color: var(--gold-accent); font-weight: 700; margin-left: 4px; animation: fadeIn 0.3s; }
+        .praise-toast { font-size: 0.75rem; color: var(--gold-accent); font-weight: 500; margin-left: 4px; animation: fadeIn 0.3s; }
 
-        .task-body-dropdown { display: none; padding: 14px; background-color: var(--bg-card-inner); border-top: 1px solid var(--border-line); font-size: 0.82rem; text-align: justify; animation: fadeIn 0.2s; }
-        .task-tips-box { font-size: 0.78rem; color: var(--m-blue); margin-top: 8px; font-weight: 500; line-height: 1.4; padding-top: 6px; border-top: 1px dashed var(--border-line); }
+        .task-body-dropdown { display: none; padding: 14px; background-color: var(--bg-card-inner); border-top: 1px solid var(--border-line); font-size: 0.82rem; text-align: justify; }
+        .task-tips-box { font-size: 0.78rem; color: var(--m-blue); margin-top: 8px; font-weight: 500; line-height: 1.4; }
 
-        /* ── INFO: 重要資訊 ──────────────────────── */
-        .guide-title { font-family: 'Noto Serif TC', serif; font-size: 1rem; color: var(--m-blue); font-weight: 700; margin: 18px 0 8px; border-bottom: 1px solid var(--border-line); padding-bottom: 4px; }
-        .info-item { display: flex; border-bottom: 1px dashed var(--border-line); padding: 10px 0; font-size: 0.82rem; align-items: flex-start; }
+        /* ── INFO: 核心資訊指南 ──────────────────────── */
+        .guide-title { font-family: 'Noto Serif TC', serif; font-size: 1rem; color: var(--m-blue); font-weight: 700; margin: 18px 0 8px; }
+        .info-item { display: flex; border-bottom: 1px solid var(--border-line); padding: 10px 0; font-size: 0.82rem; }
         .info-item:last-child { border-bottom: none; }
-        .info-lbl { width: 95px; color: var(--ink-grey); font-weight: 500; flex-shrink: 0; }
+        .info-lbl { width: 95px; color: var(--ink-grey); flex-shrink: 0; }
         .info-val { color: var(--ink-black); line-height: 1.5; }
 
-        /* ── 底部導覽列 (ITIN、Qs、INFO) ──────────────────────── */
+        /* ── 底部切換 Tab ──────────────────────── */
         .bottom-nav {
             position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
             width: 88%; max-width: 400px; background-color: rgba(253, 252, 249, 0.94);
@@ -204,11 +200,11 @@
             display: flex; justify-content: space-around; padding: 8px 0;
             box-shadow: 0 6px 20px rgba(74, 105, 132, 0.08); z-index: 1500;
         }
-        .nav-tab { display: flex; flex-direction: column; align-items: center; color: var(--ink-grey); font-size: 0.72rem; font-weight: 700; cursor: pointer; width: 30%; transition: color 0.2s; }
+        .nav-tab { display: flex; flex-direction: column; align-items: center; color: var(--ink-grey); font-size: 0.72rem; font-weight: 500; cursor: pointer; width: 30%; }
         .nav-tab.active { color: var(--m-blue); }
         .nav-tab-icon { font-size: 1.15rem; margin-bottom: 1px; }
 
-        /* 特效畫布 */
+        /* 特效元件畫布 */
         #canvas-sparks { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; }
         .sparkle-particle { position: absolute; pointer-events: none; width: 6px; height: 6px; background-color: var(--gold-accent); border-radius: 50%; animation: spark 0.6s ease-out forwards; }
         @keyframes spark { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; } }
@@ -230,7 +226,7 @@
         
         <div class="cover-mission-box">
             <div class="cover-mission-title">MISSION</div>
-            <div class="cover-mission-content">「你排什麼我就去什麼,然後我就把它剪成影片」</div>
+            <div class="cover-mission-content">「你排什麼我就去什麼，然後我就把它剪成影片」</div>
         </div>
         
         <button class="enter-btn" onclick="enterApp()">開始冒險</button>
@@ -242,18 +238,18 @@
             <div class="app-bar-header">
                 <div class="app-bar-title">
                     <h1 id="app-panel-title">ITINERARY 行程</h1>
-                    <p>2026.05.30 ─ 06.13 多端同步系統</p>
+                    <p>2026.05.30 ─ 06.13 多端同步跨裝置系統</p>
                 </div>
                 <div class="sync-badge">
                     <div class="sync-dot" id="firebase-dot"></div>
-                    <span id="sync-text">雲端同步中</span>
+                    <span id="sync-text">同步讀取中</span>
                 </div>
             </div>
         </div>
 
         <div class="progress-section">
             <div class="progress-row">
-                <span>行程時間軸進度</span>
+                <span>目前旅程進度軸</span>
                 <span id="global-progress-txt">1 / 15 天</span>
             </div>
             <div class="progress-bar-container">
@@ -266,7 +262,7 @@
                 <button class="cat-btn active" onclick="filterCategory('all', this)">總覽</button>
                 <button class="cat-btn" onclick="filterCategory('seoul', this)">05/30–06/06 首爾</button>
                 <button class="cat-btn" onclick="filterCategory('busan', this)">06/07–06/10 釜山</button>
-                <button class="cat-btn" onclick="filterCategory('hongdae', this)">06/10–06/13 弘大</button>
+                <button class="cat-btn" onclick="filterCategory('hongdae', this)">06/11–06/13 弘大</button>
             </div>
             <div id="itinerary-cards-container"></div>
         </div>
@@ -274,7 +270,7 @@
         <div class="container" id="panel-qs">
             <div class="badge-status-box">
                 <div class="badge-status-text" id="badge-next-alert">載入中...</div>
-                <div class="progress-bar-container" style="height: 5px;">
+                <div class="progress-bar-container" style="height: 4px;">
                     <div class="progress-bar-fill" id="badge-progress-fill" style="background: var(--gold-accent);"></div>
                 </div>
                 <div class="badge-grid" id="badge-grid-target"></div>
@@ -284,44 +280,35 @@
 
         <div class="container" id="panel-info">
             <div class="card" style="margin-top:15px;">
-                <div class="guide-title" style="margin-top:0;">✈️ 航班動態資訊</div>
-                <div class="info-item"><div class="info-lbl">去程航班</div><div class="info-val">虎航 IT622 | 05/30 SAT 15:55 出發<br>預計 19:45 抵達南韓金浦國際機場</div></div>
-                <div class="info-item"><div class="info-lbl">回程航班</div><div class="info-val">虎航 IT663 | 06/13 SAT 20:35 起飛<br>自金浦國際機場返回台灣</div></div>
+                <div class="guide-title" style="margin-top:0;">📋 航班與緊急聯絡</div>
+                <div class="info-item"><div class="info-lbl">去程航班</div><div class="info-val">05/30 (六) 15:55 台灣虎航 IT622 出發</div></div>
+                <div class="info-item"><div class="info-lbl">回程航班</div><div class="info-val">06/13 (六) 20:35 金浦機場 IT663 返航</div></div>
+                <div class="info-item"><div class="info-lbl">緊急電話</div><div class="info-val">韓國觀光諮詢與救助：1330<br>緊急醫療/火警：119｜警察局：112</div></div>
             </div>
 
             <div class="card">
-                <div class="guide-title" style="margin-top:0;">🏠 跨區下榻住宿基地</div>
+                <div class="guide-title" style="margin-top:0;">🏠 住宿基地清單</div>
                 <div class="info-item">
                     <div class="info-lbl">05/30-06/06<br>首爾 (朋友家)</div>
                     <div class="info-val">
                         <strong>Hung Shu Ting</strong><br>
-                        📞 010-5202-0455<br>
-                        📮 07781<br>
-                        📍 13, Gangseo-ro 10-gil, Gangseo-gu, Seoul, Republic of Korea<br>
-                        <span style="color:var(--gold-accent); font-size:0.75rem;">* 06/07 早上將搭乘早班飛機從首爾飛往釜山</span>
+                        010-5202-0455<br>
+                        郵遞區號: 07781<br>
+                        13, Gangseo-ro 10-gil, Gangseo-gu, Seoul, Republic of Korea
                     </div>
                 </div>
                 <div class="info-item">
                     <div class="info-lbl">06/07-06/10<br>釜山</div>
                     <div class="info-val">
-                        • 06/07：<strong>FUNWAVE</strong> 基地飯店<br>
-                        • 06/08-06/10：<strong>中央灣飯店 (Central Bay)</strong><br>
-                        🌐 官方網頁：<a href="http://www.centralbay.co.kr" target="_blank" style="color:var(--m-blue); text-decoration:underline;">www.centralbay.co.kr</a>
+                        06/07：<strong>FUNWAVE 海雲台</strong><br>
+                        06/08-06/10：<strong>中央灣飯店 (Central Bay)</strong><br>
+                        <a href="http://www.centralbay.co.kr" target="_blank" style="color:var(--m-blue); text-decoration:underline;">www.centralbay.co.kr</a>
                     </div>
                 </div>
                 <div class="info-item">
-                    <div class="info-lbl">06/10-06/13<br>弘大 (朋友家)</div>
-                    <div class="info-val">
-                        返回首爾本陣基地（與首爾朋友家同地址）
-                    </div>
+                    <div class="info-lbl">06/11-06/13<br>弘大 (朋友家)</div>
+                    <div class="info-val">同首爾 Gangseo-gu 基地地址本館</div>
                 </div>
-            </div>
-
-            <div class="card">
-                <div class="guide-title" style="margin-top:0;">🚨 應急求助聯絡電話</div>
-                <div class="info-item"><div class="info-lbl">警察局</div><div class="info-val">112 (犯罪通報、緊急安全事件)</div></div>
-                <div class="info-item"><div class="info-lbl">消防局</div><div class="info-val">119 (火災、突發性急性醫療救護)</div></div>
-                <div class="info-item"><div class="info-lbl">觀光諮詢翻譯</div><div class="info-val">1330 (韓國旅遊綜合諮詢、免費多語系翻譯協助)</div></div>
             </div>
         </div>
 
@@ -340,112 +327,161 @@
     </div>
 
     <script>
-    // ── 1. 全域靜態行程資料庫 (串接 Naver Map 搜尋與雙方案架構) ────────────────────────
+    // ── 1. 行程與 10 個任務核心資料 ────────────────────────
     const ITINERARY_DATA = [
-        { d: "05/30", dateStr: "DAY1 05/30 SAT", subInfo: "落地首爾：金浦機場 → 江西區 2.5hr", cat: "seoul", title: "落地首爾開場篇", mode: "both",
-          spots: [{
-              n: "IT622 出發抵達金浦機場", l: "金浦國際機場", t: "15:55-19:45",
-              f: ["抵達後於 1F 辦理更換 SIM 卡 (KT 或 SKT 方案)", "購買並儲值 T-money 交通實體卡以便後續搭乘", "入境海關路卡在飛機上先填寫好, 可大幅度加快通關速度"]
-          }], p: "小提醒方框：SIM ₩20,000–35,000、機場部分店家需準備現鈔" },
-          
-        { d: "05/31", dateStr: "DAY2 05/31 SAT", subInfo: "首爾潮流探索", cat: "seoul", title: "舊鐵道與街頭律動", mode: "lazy",
-          lazySum: "午後慵懶散步於舊鐵道改建的林蔭綠地，尋找交錯巷弄內獨立文青選物店。",
-          lazyNote: "提示：放慢步調，順著直覺在延南洞街角喝杯清爽黑咖啡。", p: "餐點與飲品預估：₩18,000" },
-        { d: "05/31", dateStr: "DAY2 05/31 SAT", subInfo: "首爾潮流探索", cat: "seoul", title: "舊鐵道與街頭律動", mode: "vibrant",
+        { d: "05/30", dateStr: "DAY1 05/30 SAT 落地首爾", sub: "金浦機場→江西區 2.5hr", cat: "seoul", mode: "both",
+          spots: [{ n: "IT622出發, 抵達金浦機場", l: "Gimpo International Airport", t: "15:55-19:45", 
+                    f: ["抵達 19:45，於 1F 換 SIM 卡(KT 或 SKT)、購 T-money 交通卡", "入境卡在飛機上先填好，加快通關", "確認手機可上網後再離開機場"] }], 
+          p: "小提醒方框：\nSIM ₩20,000–35,000 (約NT$500-850)\n機場部分需現金" },
+        
+        { d: "05/31", dateStr: "DAY2 05/31 SUN 延南選物散策", sub: "感受復古街區的午後氣息", cat: "seoul", mode: "lazy",
+          lazySum: "午後慵懶遊逛延南洞林蔭道，發掘巷弄深處的獨立香氛與復古選物店。",
+          lazyNote: "隨心慢行，不刻意安排密集點位，保留最大的散步空白。", p: "預估餐點：₩15,000" },
+        { d: "05/31", dateStr: "DAY2 05/31 SUN 延南選物散策", sub: "感受復古街區的午後氣息", cat: "seoul", mode: "vibrant",
           spots: [
-              { n: "京義線林蔭公園", l: "Gyeongui Line Forest Park", t: "2 hr", f: ["漫步舊鐵道改建城市綠地", "近距離捕捉首爾市民日常生活街拍", "外帶一杯冰美式咖啡享受午後陽光"] },
-              { n: "弘大步行街商圈", l: "Hongdae Shopping Street", t: "3 hr", f: ["考察前線獨立潮流服飾與設計小物", "街頭藝人帶狀音樂舞蹈表演動態捕捉", "晚餐享用金黃酥脆的雙重油炸韓式脆皮炸雞"] }
-          ], p: "交通與特色晚餐預估：₩29,000" },
+              { n: "京義線林蔭公園", l: "Gyeongui Line Forest Park", t: "2.0 hr", f: ["漫步舊鐵道改建綠地空間", "錄製草皮路人笑聲環境音", "外帶極簡美式冰咖啡"] },
+              { n: "弘大商圈潮流街", l: "Hongdae Shopping Street", t: "3.5 hr", f: ["深度考察獨立潮流設計服飾", "街頭藝人帶狀音樂表演捕捉", "享用酥脆香烤韓式炸雞"] }
+          ], p: "預估項目花費：\n餐食交通：₩26,000" },
 
-        { d: "06/01", dateStr: "DAY3 06/01 SUN", subInfo: "工業風與當代視覺對比", cat: "seoul", title: "聖水洞現代衝突", mode: "lazy",
-          lazySum: "沉浸拜訪舊製鞋廠、金屬加工廠改建而成的巨型幾何複合式美學展演空間。",
-          lazyNote: "提示：聖水洞假日熱門店人潮極多，遇到排隊過長可直接率性更換下一家。", p: "Free" },
-        { d: "06/01", dateStr: "DAY3 06/01 SUN", subInfo: "工業風與當代視覺對比", cat: "seoul", title: "聖水洞現代衝突", mode: "vibrant",
+        { d: "06/01", dateStr: "DAY3 06/01 MON 聖水工業前衛美學", sub: "現代與粗獷工業交界點", cat: "seoul", mode: "lazy",
+          lazySum: "探訪聖水洞由舊工廠改建的巨型展演空間，觀察幾何建築在陽光下的線條留白。",
+          lazyNote: "尋找不需排隊的文青概念店，享受一個人的黑咖啡時光。", p: "免預約門票" },
+        { d: "06/01", dateStr: "DAY3 06/01 MON 聖水工業前衛美學", sub: "現代與粗獷工業交界點", cat: "seoul", mode: "vibrant",
           spots: [
-              { n: "LCDC Seoul", l: "LCDC Seoul", t: "2.5 hr", f: ["工業工廠改建的多層次幾何光影空間取景", "深度考察頂樓進駐的獨立設計師小眾品牌", "捕捉極簡線條與大膽鋼骨結構交織的視覺感"] },
-              { n: "文來洞藝術街區", l: "Mullae Art Village", t: "2 hr", f: ["重工業鐵工廠與前衛街頭塗鴉的強烈對比", "穿梭巷弄尋找隱藏的金屬藝術工作坊", "使用相機錄製粗獷工業風的復古底片感影片"] }
-          ], p: "文創小物與餐點：₩25,000" },
+              { n: "LCDC Seoul", l: "LCDC Seoul", t: "2.5 hr", f: ["工廠改建前衛幾何空間取景", "考察頂樓獨立文創品牌個展", "體驗極簡視覺光影結構"] },
+              { n: "文來洞藝術村", l: "Mullae Art Village", t: "2.0 hr", f: ["鋼鐵加工廠與街頭塗鴉的強烈對比", "鐵工坊職人現場操作聲音採集", "底片感粗獷工業風創作"] }
+          ], p: "預估花費：\n飲品點心：₩18,000" },
 
-        { d: "06/02", dateStr: "DAY4 06/02 MON", subInfo: "時空倒流古著挖寶", cat: "seoul", title: "時空倒流古著獵人", mode: "lazy",
-          lazySum: "早晨漫步於充滿歲月刻痕的老派露天二手集市，感受純粹的老靈魂市井張力。",
-          lazyNote: "小提醒：老地灘高度依賴現金交易，請準備好千元韓元現鈔零錢放口袋。", p: "Free" },
-        { d: "06/02", dateStr: "DAY4 06/02 MON", subInfo: "時空倒流古著挖寶", cat: "seoul", title: "時空倒流古著獵人", mode: "vibrant",
+        { d: "06/02", dateStr: "DAY4 06/02 TUE 東廟古著挖寶張力", sub: "穿梭老派庶民市集", cat: "seoul", mode: "lazy",
+          lazySum: "漫步在歲月堆疊的老市集，感受純粹、無修飾的首爾在地復古生活感。",
+          lazyNote: "這裡的老地攤充滿生命力，是攝影師挖寶的黃金天堂。", p: "古著地攤純付現" },
+        { d: "06/02", dateStr: "DAY4 06/02 TUE 東廟古著挖寶張力", sub: "穿梭老派庶民市集", cat: "seoul", mode: "vibrant",
           spots: [
-              { n: "東廟前傳統市場", l: "Dongmyo Flea Market", t: "3 hr", f: ["在震撼的古著衣服山堆中展開精準翻找大作戰", "地攤老派懷舊物件的微距光影視覺特寫", "注意：此區地攤基本不接受刷卡, 務必付現"] },
-              { n: "益善洞韓屋村", l: "Ikseon-dong Hanok Village", t: "2 hr", f: ["百年改良古厝韓屋錯綜複雜的浪漫小徑", "懷舊復古裝潢咖啡廳的精緻視覺碰撞", "晚餐品嚐底部帶有香脆硬挺鍋巴的熱騰騰石鍋拌飯"] }
-          ], p: "古著戰利品與特色晚餐：₩48,000" },
+              { n: "東廟前傳統市場", l: "Dongmyo Flea Market", t: "3.0 hr", f: ["古著衣服山翻找大作戰", "捕捉地攤老物件特寫鏡頭", "注意：此區多數地攤僅收現金"] },
+              { n: "益善洞韓屋村", l: "Ikseon-dong Hanok Village", t: "2.0 hr", f: ["百年改良韓屋錯綜窄巷走訪", "享用底部微焦脆的石鍋拌飯", "復古咖啡廳空間光影碰撞"] }
+          ], p: "預估花費：\n挖寶餐食預算：₩40,000" },
 
-        { d: "06/07", dateStr: "DAY9 06/07 SUN", subInfo: "大轉場：奔向釜山海線", cat: "busan", title: "南下高鐵與海景序章", mode: "both",
+        { d: "06/03", dateStr: "DAY5 06/03 WED 當代美術館視覺洗禮", sub: "傳統聚落與極簡留白", cat: "seoul", mode: "lazy",
+          lazySum: "沉浸在美術館安靜的當代展品中，午後至北村高處遠眺密集的瓦片屋頂線條。",
+          lazyNote: "步伐放慢，在歷史悠久的木質老屋間尋找寂靜的構圖。", p: "Free" },
+        { d: "06/03", dateStr: "DAY5 06/03 WED 當代美術館視覺洗禮", sub: "傳統聚落與極簡留白", cat: "seoul", mode: "vibrant",
           spots: [
-              { n: "首爾站 KTX 高鐵", l: "Seoul Station KTX", t: "3 hr", f: ["搭乘高速列車縱向橫跨朝鮮半島", "車窗外流動的平原山脈原野風景縮時紀錄", "體驗時速 300 公里穩定安靜的過渡感"] },
-              { n: "海雲台沙灘基地", l: "Haeundae Beach", t: "2 hr", f: ["迎面感受釜山溫潤微風與寬闊蔚藍海平面", "錄製抵達釜山的首支海浪音效動態短片", "前往 FUNWAVE 辦理今日落腳報到手續"] }
-          ], p: "KTX 核心高速車票：₩78,000" },
+              { n: "國立現代美術館 MMCA", l: "National Museum of Modern and Contemporary Art Seoul", t: "2.5 hr", f: ["極簡大氣展館空間幾何攝影", "當代先鋒跨界裝置藝術考察", "中庭空間留白與光影捕捉"] },
+              { n: "北村韓屋村", l: "Bukchon Hanok Village", t: "2.0 hr", f: ["俯瞰青瓦老屋排列延伸線", "尋找隱密傳統工藝老工坊", "高低階梯與古典門窗對齊拍攝"] }
+          ], p: "預估項目花費：\n美術館聯票：₩22,000" },
 
-        { d: "06/08", dateStr: "DAY10 06/08 MON", subInfo: "彩色海軌與釜山聖多里尼", cat: "busan", title: "絕美海景與復古車廂", mode: "lazy",
-          lazySum: "乘坐貼著蔚藍海岸線緩慢滑行的復古微型小車廂，午後在斷崖老屋咖啡廳放空。",
-          lazyNote: "提示：白淺灘依山而建，陡峭台階極多，行走時請緊握扶手注意安全。", p: "Free" },
-        { d: "06/08", dateStr: "DAY10 06/08 MON", subInfo: "彩色海軌與釜山聖多里尼", cat: "busan", title: "絕美海景與復古車廂", mode: "vibrant",
+        { d: "06/04", dateStr: "DAY6 06/04 THU 黑膠旋律與山城日落", sub: "漢南設計師街區陡坡考察", cat: "seoul", mode: "lazy",
+          lazySum: "在巨幅黑膠唱片牆下聆聽時代迴音，傍晚遠眺日落時分亮起微光的山城。",
+          lazyNote: "斜坡極多，建議穿著支撐力佳的硬底鞋，隨時駐足看風景。", p: "Free" },
+        { d: "06/04", dateStr: "DAY6 06/04 THU 黑膠旋律與山城日落", sub: "漢南設計師街區陡坡考察", cat: "seoul", mode: "vibrant",
           spots: [
-              { n: "海雲台尾浦藍線公園", l: "Blueline Park Mipo", t: "2 hr", f: ["搭乘熱門彩色膠囊小火車，捕捉復古可愛車廂", "高角度俯瞰無邊際海景與鐵軌延伸線條構圖", "熱門時段強烈建議務必提早完成線上預約"] },
-              { n: "白淺灘文化村", l: "Huinnyeoul Culture Village", t: "3 hr", f: ["漫步藍白相間、錯落有致的懸崖老屋聚落", "拜訪海天一色的斷崖美學文青咖啡廳", "在經典海景防波堤前進行底片逆光人像特寫"] }
-          ], p: "膠囊火車預約門票與景觀飲品：₩44,000" },
+              { n: "Vinyl & Plastic", l: "Vinyl & Plastic", t: "2.0 hr", f: ["雙層巨幅黑膠唱片牆壯觀特寫", "盲選西洋復古唱片現場試聽", "落地窗通透採光線條構圖"] },
+              { n: "梨泰院解放村", l: "Haebangchon", t: "2.5 hr", f: ["山城傍晚絕美落日餘暉紀錄", "遠眺南山首爾塔點燈動態", "晚餐享用高溫焦脆烤肉"] }
+          ], p: "預估花費：\n景觀交通餐飲：₩35,000" },
 
-        { d: "06/12", dateStr: "DAY14 06/12 FRI", subInfo: "重要行程：棉被採購與最後大集市", cat: "hongdae", title: "回台前夕核心採購", mode: "both",
+        { d: "06/05", dateStr: "DAY7 06/05 FRI 歷史歷史刻痕與人間煙火", sub: "紅磚牢房與在地小吃", cat: "seoul", mode: "lazy",
+          lazySum: "探訪歷史斑駁的紅磚古蹟，傍晚到充滿民生煙火氣的傳統市場散步。",
+          lazyNote: "感受嚴肅空間與溫暖市井小吃所帶來的強烈視覺反差。", p: "市場小吃需韓元現金" },
+        { d: "06/05", dateStr: "DAY7 06/05 FRI 歷史歷史刻痕與人間煙火", sub: "紅磚牢房與在地小吃", cat: "seoul", mode: "vibrant",
           spots: [
-              { n: "南大門市場 (棉被專屬鋪位區)", l: "Namdaemun Market", t: "2.5 hr", f: ["精選採購南韓招牌極輕量、高保暖之高品質棉被", "現場觀賞並錄製店主使用強力真空壓縮機打包棉被奇景", "注意：部分傳統老字號被服鋪付現通常有額外折扣"] },
-              { n: "弘大熱鬧街頭", l: "Hongdae Entrance Area", t: "2 hr", f: ["重返弘大核心腹地，觀賞街頭藝人青春熱辣的歌舞表演", "享受首爾最後一夜的市井煙火氣與大眾潮流律動"] }
-          ], p: "真空高保暖韓國棉被與街頭特色小吃：₩115,000" },
+              { n: "西大門刑務所歷史館", l: "Seodaemun Prison History Hall", t: "2.0 hr", f: ["孤立紅磚牢房嚴肅光影捕捉", "高聳監獄圍牆幾何線條構圖", "調低曝光營造歷史沉澱感"] },
+              { n: "望遠市場", l: "Mangwon Market", t: "2.0 hr", f: ["傳統老集市生活張力錄製", "品嚐現炸雙重酥脆無奶雞丁", "部分老攤位只收韓元現金"] }
+          ], p: "預估項目花費：\n歷史館門票與點心：₩15,000" },
 
-        { d: "06/13", dateStr: "DAY15 06/13 SAT", subInfo: "最終進場賦歸台灣", cat: "hongdae", title: "底片結案與返航", mode: "both",
+        { d: "06/06", dateStr: "DAY8 06/06 SAT 首爾段行李盤點", sub: "準備高鐵南下大轉場", cat: "seoul", mode: "both",
+          spots: [{ n: "江西區本館基地", l: "Gangseo-gu Seoul", t: "3.0 hr", f: ["整理首爾段一整週底片與攝影素材備份", "打包行李，準備明日一早大轉場移動", "盤點隨身包包，維持輕裝便攜狀態"] }], p: "Free" },
+        
+        { d: "06/07", dateStr: "DAY9 06/07 SUN 早班飛機切換！奔向釜山", sub: "首爾站→釜山站 KTX 大轉場", cat: "busan", mode: "both",
           spots: [
-              { n: "弘大入口周邊散策", l: "Hongdae Entrance", t: "2 hr", f: ["用最後一捲復古底片為這趟旅程進行盲旅補漏拍攝", "在質感咖啡廳內對這 15 天的拍攝素材進行盲旅初步盤點", "整理雙重真空棉被，將行李箱完整封箱打包"] },
-              { n: "金浦國際機場", l: "Gimpo Airport Terminal", t: "3 hr", f: ["16:00 準時前往機場櫃檯辦理登機與行李託運手續", "辦理 WOWPASS 實體卡片餘額退稅退韓元手續", "搭乘 IT663 班機於 20:35 準時起飛重返台灣"] }
-          ], p: "機場航廈接駁與輕餐食：₩19,000" }
+              { n: "首爾站 KTX 高鐵南下", l: "Seoul Station KTX", t: "07:00-10:15", f: ["改搭乘 KTX 高速列車橫跨半島 (取代原本飛機選項，更安全準時)", "拍攝窗外風景流動縮時錄影", "體驗時速三百公里的極致穩定"] },
+              { n: "海雲台 FUNWAVE 報到", l: "Haeundae Beach", t: "2.0 hr", f: ["釜山開闊海平面與清新微風採集", "入住 06/07 特選基地 FUNWAVE", "與在地女性朋友會合開場短片"] }
+          ], p: "預估項目花費：\nKTX 高鐵車票：₩59,800" },
+
+        { d: "06/08", dateStr: "DAY10 06/08 MON 復古海軌與聖托里尼", sub: "釜山絕美斷崖咖啡廳", cat: "busan", mode: "lazy",
+          lazySum: "乘坐行駛於海岸線的彩色復古車廂，下午在白淺灘斷崖邊悠閒放空。",
+          lazyNote: "階梯陡峭，行走請務必握緊扶手，注意安全。", p: "膠囊火車建議提早預約" },
+        { d: "06/08", dateStr: "DAY10 06/08 MON 復古海軌與聖托里尼", sub: "釜山絕美斷崖咖啡廳", cat: "busan", mode: "vibrant",
+          spots: [
+              { n: "海雲台尾浦藍線公園", l: "Blueline Park Mipo", t: "2.5 hr", f: ["彩色天空膠囊小火車精緻構圖", "軌道延伸與海天一色黃金視角", "捕捉車窗框架內的復古氛圍"] },
+              { n: "白淺灘文化村", l: "Huinnyeoul Culture Village", t: "3.0 hr", f: ["藍白老屋聚落與防波堤逆光捕捉", "入住中央灣飯店 (Central Bay)", "海景斷崖絕美咖啡廳取景"] }
+          ], p: "預估花費：\n膠囊小火車與海景咖啡：₩38,000" },
+
+        { d: "06/09", dateStr: "DAY11 06/09 TUE 彩色山城與絕版舊書街", sub: "迷宮巷弄與舊書堆震撼", cat: "busan", mode: "lazy",
+          lazySum: "依山而建的彩色積木小屋散步，午後探尋老城區極具情懷的舊書店街。",
+          lazyNote: "漫步在老書店書堆夾道中，嗅聞紙張泛黃的懷舊氣味。", p: "Free" },
+        { d: "06/09", dateStr: "DAY11 06/09 TUE 彩色山城與絕版舊書街", sub: "迷宮巷弄與舊書堆震撼", cat: "busan", mode: "vibrant",
+          spots: [
+              { n: "甘川洞文化村", l: "Gamcheon Culture Village", t: "2.5 hr", f: ["飽和度積木小屋全景幾何構圖", "尋找小王子與狐狸經典背影視角", "穿梭如迷宮般的水泥壁畫巷弄"] },
+              { n: "寶水洞書店街", l: "Bosudong Book Street", t: "2.0 hr", f: ["兩層樓高古舊書堆夾道視覺震撼", "古樸木製招牌與復古人文感攝影", "挑選一本絕版舊書作為旅行紀念"] }
+          ], p: "預估項目花費：\n紀念品與老店點心：₩18,000" },
+
+        { d: "06/10", dateStr: "DAY12 06/10 WED 跨海大橋巡禮→重返弘大", sub: "廣安里海灘地標打卡", cat: "busan", mode: "both",
+          spots: [
+              { n: "廣安里海灘大橋拍照", l: "Gwangalli Beach", t: "2.0 hr", f: ["廣安大橋橫跨海面雄偉線條捕捉", "沙灘與現代高樓的錯落構圖", "拍完最後一組釜山海景後北上高鐵"] },
+              { n: "KTX 高鐵返回首爾", l: "Busan Station KTX", t: "3.5 hr", f: ["搭乘下午列車重返首爾 Gangseo-gu 基地", "進行中後期轉場影片素材分類", "準備倒數三天的深度弘大計畫"] }
+          ], p: "預估項目花費：\nKTX 高鐵回程：₩59,800" },
+
+        { d: "06/11", dateStr: "DAY13 06/11 THU 隱藏山城付岩洞藝術聚落", sub: "遠離喧囂的安靜高地", cat: "hongdae", mode: "lazy",
+          lazySum: "漫步付岩洞安靜高地，這裡隱藏許多私人獨立美術館與文青手作空間。",
+          lazyNote: "坡度緩和，非常適合用慢速底片捕捉幽靜的門框幾何線條。", p: "美術館門票另計" },
+        { d: "06/11", dateStr: "DAY13 06/11 THU 隱藏山城付岩洞藝術聚落", sub: "遠離喧囂的安靜高地", cat: "hongdae", mode: "vibrant",
+          spots: [{ n: "付岩洞藝術街區", l: "Buam-dong Seoul", t: "3.5 hr", f: ["遠眺首爾古老城郭線條延伸", "走訪山城隱密特色畫廊與工坊", "在全景景觀咖啡廳進行腳本初剪"] }], p: "預估花費：\n山城交通與咖啡：₩14,000" },
+
+        { d: "06/12", dateStr: "DAY14 06/12 FRI 核心行程：棉被採購大作戰", sub: "排在回台前一天！方便真空打包", cat: "hongdae", mode: "both",
+          spots: [
+              { n: "南大門市場 (特選棉被店鋪區)", l: "Namdaemun Market", t: "2.5 hr", f: ["採購南韓特產招牌高保暖極輕冬被", "完整錄製店主現場超高速真空壓縮打包奇景", "注意：部分傳統老被服店付現可享折扣"] },
+              { n: "回到弘大看街頭藝人表演", l: "Hongdae Street Performance", t: "3.0 hr", f: ["重返鬧市中心，享受最後一夜的韓式熱鬧", "街頭藝人熱辣歌舞動態特寫鏡頭採集", "吃一頓酥脆外皮烤五花肉慶功宴"] }
+          ], p: "預估項目花費：\n韓國冬被與大餐：₩130,000\n(部分老鋪付現有折扣)" },
+
+        { d: "06/13", dateStr: "DAY15 06/13 SAT 素材盲旅結案！最終賦歸", sub: "16:00 前往金浦機場", cat: "hongdae", mode: "both",
+          spots: [
+              { n: "弘大入口周邊最終散策", l: "Hongdae Entrance Area", t: "2.5 hr", f: ["補拍最後一捲復古底片空鏡頭", "盲旅攝影素材初步總盤點與分類", "確認雙重真空棉被與行李箱封箱"] },
+              { n: "金浦機場 IT663 起飛", l: "Gimpo Airport Terminal", t: "3.0 hr", f: ["16:00 前抵達金浦國際機場辦理登機", "辦理 WOWPASS 餘額退稅手續", "20:35 班機準時起飛重返台灣"] }
+          ], p: "預估項目花費：\n機場接駁與退稅手續：Free" }
     ];
 
-    // ── 2. Qs 任務資料庫 (共10個獨立盲旅任務 + 5+1 徽章關卡) ────────────────────────
+    // 10 個盲旅特殊任務，可勾選/取消
     const TASKS_DATA = [
         { id: "q1", icon: "📜", title: "錄製平行時空", desc: "在延南洞京義線舊鐵道草皮旁，閉上眼睛錄製一整段包含路人笑聲、微風拂過樹葉的乾淨環境音效，若遠處有吉他街頭表演，也歡迎收錄。", tips: "✔︎使用內建錄音機即可，後續可做為影片的轉場音軌。" },
-        { id: "q2", icon: "📜", title: "捕捉異國首支背影", desc: "在金浦機場入境大廳，尋找一位穿搭最吸引妳的陌生人，用手機鏡頭捕捉他離去的背影與宏大機場鋼骨線條。", tips: "✔︎錄影維持至少 5 秒不要晃動，這是極佳的 Vlog 故事開頭過場素材。" },
-        { id: "q3", icon: "📜", title: "水泥與鋼鐵的交界", desc: "在聖水洞舊製鞋工廠斑駁的紅磚牆前，尋找一扇完全生鏽的鐵門，並拍攝一張高對比度、幾何線條強烈的微距特寫。", tips: "✔︎利用午後三點的側光，能完美勾勒出建築結構的顆粒紋理。" },
-        { id: "q4", icon: "📜", title: "古著獵人的直覺", desc: "在東廟市場一望無際的衣服山堆裡，限時五分鐘，盲選出一件配色最詭異或最復古的夾克外衣，並拿在身前合照。", tips: "✔︎考驗直覺的時刻！地攤多不開放試穿，純看妳的時尚雷達。" },
-        { id: "q5", icon: "📜", title: "百年改良青瓦對齊", desc: "在北村韓屋小徑坡道最高處，將相機對齊遠方現代大樓與近處傳統黑瓦屋頂的交界線，按下快門捕捉時空交錯感。", tips: "✔︎保持安靜，這裡依然是真實住宅區，尊重在地住戶隱私。" },
-        { id: "q6", icon: "📜", title: "黑膠牆下的節奏迴音", desc: "在 Vinyl & Plastic 雙層黑膠唱片行中，挑選一張妳完全不認識的西洋復古老唱片，現場戴上耳機並盲錄下妳聽到的前奏三秒。", tips: "✔︎Let music decide the rhythm. 讓音樂決定妳這支影片的剪輯風格與律動節奏。" },
-        { id: "q7", icon: "📜", title: "歷史餘溫的光影對白", desc: "在西大門刑務所紅磚獨立牢房內，尋找一束從極高天窗垂直灑下的狹窄陽光，並將相機置於地面由下往上拍攝高聳圍牆。", tips: "✔︎故意調低曝光補償，能完美營造出厚重歷史沉澱的黑白底片張力。" },
-        { id: "q8", icon: "📜", title: "彩色海軌縮時紀錄", desc: "在海雲台天空膠囊小火車行駛途中，將手機固定在復古彩色車窗邊，錄製一段長達兩分鐘的海天一色極速縮時攝影。", tips: "✔︎這是本次盲旅企劃最具殺傷力的黃金視覺亮點，務必確保鏡頭無指紋。" },
-        { id: "q9", icon: "📜", title: "尋找彩色積木守護者", desc: "在甘川洞文化村起伏的水泥台階上，尋找一隻正在曬太陽的在地野貓，並以背景密集的彩色積木小屋為散景為牠拍攝特寫。", tips: "<ul><li>✔︎貓咪是甘川洞活歷史的一部分，動作放輕，避免驚嚇到牠們。</li></ul>" },
-        { id: "q10", icon: "📜", title: "棉被真空壓縮魔術", desc: "在南大門市場買棉被時，完整錄下老闆熟練地將巨大蓬鬆棉被塞入膠袋、啟動抽風機瞬間將其壓縮成扁平太空包的全過程。", tips: "✔︎這個充滿民生魔幻感的畫面非常適合做為旅途尾聲的趣味爆點。" }
+        { id: "q2", icon: "📜", title: "捕捉異國首支背影", desc: "在金浦機場入境大廳，尋找一位穿搭最吸引妳的陌生人，用手機鏡頭捕捉他離去的背影與宏大機場鋼骨線條。", tips: "✔︎ 錄影維持至少 5 秒不要晃動，這是極佳的 Vlog 故事開頭過場素材。" },
+        { id: "q3", icon: "📜", title: "水泥與鋼鐵的交界", desc: "在聖水洞舊製鞋工廠斑駁的紅磚牆前，尋找一扇完全生鏽的鐵門，並拍攝一張高對比度、幾何線條強烈的微距特寫。", tips: "✔︎ 利用午後三點的側光，能完美勾勒出建築結構的顆粒紋理。" },
+        { id: "q4", icon: "📜", title: "古著獵人的直覺", desc: "在東廟市場一望無際的衣服山堆裡，限時五分鐘，盲選出一件配色最詭異或最復古的夾克外衣，並拿在身前合照。", tips: "✔︎ 考驗直覺的時刻！地攤多不開放試穿，純看妳的時尚雷達。" },
+        { id: "q5", icon: "📜", title: "百年改良青瓦對齊", desc: "在北村韓屋小徑坡道最高處，將相機對齊遠方現代大樓與近處傳統黑瓦屋頂的交界線，按下快門捕捉時空交錯感。", tips: "✔︎ 保持安靜，這裡依然是真實住宅區，尊重在地住戶隱私。" },
+        { id: "q6", icon: "📜", title: "黑膠牆下的節奏迴音", desc: "在 Vinyl & Plastic 雙層黑膠唱片行中，挑選一張妳完全不認識的西洋復古老唱片，現場戴上耳機並盲錄下妳聽到的前奏三秒。", tips: "✔︎ Let music decide the rhythm. 讓音樂決定妳這支影片的剪輯風格與律動節奏。" },
+        { id: "q7", icon: "📜", title: "歷史餘溫的光影對白", desc: "在西大門刑務所紅磚獨立牢房內，尋找一束從極高天窗垂直灑下的狹窄陽光，並將相機置於地面由下往上拍攝高聳圍牆。", tips: "✔︎ 故意調低曝光補償，能完美營造出厚重歷史沉澱的黑白底片張力。" },
+        { id: "q8", icon: "📜", title: "彩色海軌縮時紀錄", desc: "在海雲台天空膠囊小火車行駛途中，將手機固定在復古彩色車窗邊，錄製一段長達兩分鐘的海天一色極速縮時攝影。", tips: "✔︎ 這是本次盲旅企劃最具殺傷力的黃金視覺亮點，務必確保鏡頭無指紋。" },
+        { id: "q9", icon: "📜", title: "尋找彩色積木守護者", desc: "在甘川洞文化村起伏的水泥台階上，尋找一隻正在曬太陽的在地野貓，並以背景密集的彩色積木小屋為散景為牠拍攝特寫。", tips: "✔︎ 貓咪是甘川洞活歷史的一部分，動作放輕，避免驚嚇到牠們。" },
+        { id: "q10", icon: "📜", title: "棉被真空壓縮魔術", desc: "在南大門市場買棉被時，完整錄下老闆熟練地將巨大蓬鬆棉被塞入膠袋、啟動抽風機瞬間將其壓縮成扁平太空包的全過程。", tips: "✔︎ 這個充滿民生魔幻感的畫面非常適合做為旅途尾聲的趣味爆點。" }
     ];
 
-    // 5個階段任務核心成就徽章組態
+    // 5 個階段性成就徽章
     const BADGES_CONFIG = [
         { req: 2, icon: "🧭", name: "流浪初學者" },
         { req: 4, icon: "🎞️", name: "膠卷曝光師" },
-        { req: 6, icon: "🔍", name: "古著追尋者" },
+        { req: 6, icon: "🔍", name: "古著尋覓者" },
         { req: 8, icon: "🌊", name: "斷崖看海人" },
         { req: 10, icon: "👑", name: "盲旅締造者" }
     ];
 
     const PRAISE_WORDS = [
         "完美！太厲害了✨", "影像紀錄師 get ✓", "這鏡頭絕對會爆！🔥", 
-        "結構與浪漫並存！🖤", "美感雷達全面爆表！"
+        "結構與浪漫並存！🖤", "這美感連神明都讚嘆！"
     ];
 
-    // ── 3. 資料儲存狀態模型 (預設狀態) ────────────────────────
+    // ── 2. 跨裝置雲端資料模型 ────────────────────────
     let ST = {
         currentFilter: "all",
         checkedTasks: {},
         badgeDates: {}
     };
 
-    // ── 4. FIREBASE 實時雲端資料庫串接 ────────────────────────
-    // 使用專屬路徑，確保不同裝置實時連線同步
+    // ── 3. FIREBASE 實時即時數據串接 ────────────────────────
     const firebaseConfig = {
         databaseURL: "https://lien-in-korea-default-rtdb.asia-southeast1.firebasedatabase.app/"
     };
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
-    const dbRef = database.ref("trips/lien_2026_v5_final/status");
+    const dbRef = database.ref("trips/lien_2026_v4/status");
 
     let isCloudConnecting = false;
 
@@ -459,49 +495,45 @@
             if (!ST.checkedTasks) ST.checkedTasks = {};
             if (!ST.badgeDates) ST.badgeDates = {};
             
-            // 快取至本地
-            localStorage.setItem("lien_kr_v5_local", JSON.stringify(ST));
+            localStorage.setItem("lien_kr_v4_local", JSON.stringify(ST));
             
-            // 實時重新渲染 UI 畫面
             renderItineraryCards();
             buildTasks();
             buildBadges();
+            updateGlobalProgress();
             
             dot.className = "sync-dot online";
-            txt.innerText = "多端實時同步中";
+            txt.innerText = "雲端實時同步中";
         } else {
             pushToCloud();
         }
         isCloudConnecting = true;
     }, (err) => {
-        console.warn("切換至本地快取安全備援模式", err);
+        console.warn("切換至區域快取離線備援模式", err);
         loadLocalCache();
     });
 
     function loadLocalCache() {
-        const local = localStorage.getItem("lien_kr_v5_local");
+        const local = localStorage.getItem("lien_kr_v4_local");
         if (local) ST = JSON.parse(local);
         renderItineraryCards();
         buildTasks();
         buildBadges();
+        updateGlobalProgress();
     }
 
     function pushToCloud() {
         if (isCloudConnecting) {
-            dbRef.set(ST).catch(e => console.error("同步至雲端失敗:", e));
+            dbRef.set(ST).catch(e => console.error("同步失敗:", e));
         } else {
-            localStorage.setItem("lien_kr_v5_local", JSON.stringify(ST));
+            localStorage.setItem("lien_kr_v4_local", JSON.stringify(ST));
         }
     }
 
-    // ── 5. UI 與分頁核心操作邏輯 ────────────────────────
-    
+    // ── 4. UI 互動與天數核心 ────────────────────────
     function enterApp() {
-        const cover = document.getElementById("cover-page");
-        const content = document.getElementById("content-page");
-        cover.style.transform = "translateY(-100vh)";
-        content.style.display = "block";
-        setTimeout(() => { content.classList.add("visible"); }, 50);
+        document.getElementById("cover-page").classList.add("hidden");
+        document.getElementById("content-page").classList.add("visible");
         triggerFullscreenSparks();
     }
 
@@ -509,13 +541,10 @@
         document.querySelectorAll(".container").forEach(c => c.classList.remove("active"));
         document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
         
-        const targetPanel = document.getElementById("panel-" + tabId);
-        const targetTab = document.getElementById("tab-" + tabId);
+        document.getElementById("panel-" + tabId).classList.add("active");
+        document.getElementById("tab-" + tabId).classList.add("active");
+
         const titleHeader = document.getElementById("app-panel-title");
-
-        targetPanel.classList.add("active");
-        targetTab.classList.add("active");
-
         if (tabId === 'itin') titleHeader.innerText = "ITINERARY 行程";
         if (tabId === 'qs') titleHeader.innerText = "QUESTIONS & TASKS 任務";
         if (tabId === 'info') titleHeader.innerText = "INFORMATION 資訊指南";
@@ -523,7 +552,7 @@
         window.scrollTo(0, 0);
     }
 
-    // 行程進度條依照實際日期動態渲染（分母為15天）
+    // 計算分母為 15 的行程進度條
     function updateGlobalProgress() {
         const start = new Date("2026-05-30T00:00:00");
         const now = new Date();
@@ -568,24 +597,20 @@
         Object.keys(groups).forEach(dateKey => {
             const items = groups[dateKey];
             const savedModeKey = `mode_${dateKey}`;
-            if (!ST[savedModeKey]) ST[savedModeKey] = "vibrant"; // 預設方案
+            if (!ST[savedModeKey]) ST[savedModeKey] = "vibrant";
             const activeMode = ST[savedModeKey];
 
             const dateBlock = document.createElement("div");
             dateBlock.className = "date-title-block";
-            dateBlock.innerHTML = `
-                <div class="date-title-top">🌊 ${items[0].dateStr}</div>
-                <div class="date-sub-info">${items[0].subInfo}</div>
-            `;
+            dateBlock.innerHTML = `🌊 ${items[0].dateStr} <span class="date-sub-info">${items[0].sub}</span>`;
             container.appendChild(dateBlock);
 
-            // 具有雙方案切換（慵懶/活力）
             if (items.length > 1) {
                 const toggleDiv = document.createElement("div");
                 toggleDiv.className = "mode-toggle-group";
                 toggleDiv.innerHTML = `
                     <div class="mode-btn ${activeMode==='lazy'?'active':''}" onclick="toggleDayMode('${dateKey}','lazy')">慵懶方案</div>
-                    <div class="mode-btn ${activeMode==='vibrant'?'active':''}" onclick="toggleDayMode('${dateKey}','vibrant')">活力充充</div>
+                    <div class="mode-btn ${activeMode==='vibrant'?'active':''}" onclick="toggleDayMode('${dateKey}','vibrant')">活力方案</div>
                 `;
                 container.appendChild(toggleDiv);
             }
@@ -607,13 +632,13 @@
                     spot.f.forEach(f => { listItems += `<li>${f}</li>`; });
                     node.innerHTML = `
                         <div class="spot-left">
-                            <span class="nav-anchor" onclick="openNaverMap('${spot.l}')">📍</span>
+                            <a class="nav-anchor" href="https://map.naver.com/v5/search/${encodeURIComponent(spot.l)}" target="_blank">📍</a>
                             <div class="spot-mid">
-                                <span class="spot-mid-time">⏰ 建議停留: ${spot.t}</span>
                                 <h4>${spot.n}</h4>
                                 <ul class="spot-desc-list">${listItems}</ul>
                             </div>
                         </div>
+                        <div class="spot-right-time">${spot.t}</div>
                     `;
                     card.appendChild(node);
                 });
@@ -623,10 +648,7 @@
             if (targetItem.p) {
                 const priceRow = document.createElement("div");
                 priceRow.className = "price-tag-wrapper";
-                priceRow.innerHTML = `
-                    <div class="price-badge-title">🎫 預估所需票券與餐點花費</div>
-                    <div class="price-badge-content">${targetItem.p}</div>
-                `;
+                priceRow.innerHTML = `<span class="price-badge">${targetItem.p.replace(/\n/g, '<br>')}</span>`;
                 card.appendChild(priceRow);
             }
 
@@ -634,38 +656,33 @@
         });
     }
 
-    function openNaverMap(query) {
-        window.open(`https://map.naver.com/v5/search/${encodeURIComponent(query)}`, '_blank');
-    }
-
-    // ── 6. Qs 任務控制面板、雙向點擊切換與亮晶晶粒子特效 ────────────────────────
+    // ── 5. Qs: 任務打勾與 5 階里程碑徽章進度系統 ────────────────────────
     function buildTasks() {
         const container = document.getElementById("tasks-list-container");
-        container.innerHTML = "<div class='guide-title'>📜 Qs 盲旅任務清單探索</div>";
+        container.innerHTML = "<div class='guide-title'>📜 10 大盲旅任務清單（點擊看詳情）</div>";
 
-        TASKS_DATA.forEach((task, idx) => {
-            const taskId = `q_${idx+1}`;
-            const isChecked = !!ST.checkedTasks[taskId];
+        TASKS_DATA.forEach(task => {
+            const isChecked = !!ST.checkedTasks[task.id];
             const card = document.createElement("div");
             card.className = "task-card";
 
             let praiseHtml = "";
             if (isChecked) {
-                const savedWordKey = `praise_word_${taskId}`;
-                if (!ST[savedWordKey]) ST[savedWordKey] = PRAISE_WORDS[idx % PRAISE_WORDS.length];
+                const savedWordKey = `praise_word_${task.id}`;
+                if (!ST[savedWordKey]) ST[savedWordKey] = PRAISE_WORDS[Math.floor(Math.random() * PRAISE_WORDS.length)];
                 praiseHtml = `<span class="praise-toast">${ST[savedWordKey]}</span>`;
             }
 
             card.innerHTML = `
-                <div class="task-header-row" onclick="toggleTaskDropdown('${taskId}', event)">
+                <div class="task-header-row" onclick="toggleTaskDropdown('${task.id}', event)">
                     <div class="task-header-left">
-                        <div class="task-checkbox ${isChecked?'checked':''}" onclick="clickCheckbox('${taskId}', event)"></div>
+                        <div class="task-checkbox ${isChecked?'checked':''}" onclick="clickCheckbox('${task.id}', event)"></div>
                         <span class="task-header-title ${isChecked?'checked-text':''}">${task.icon} ${task.title}</span>
                         ${praiseHtml}
                     </div>
-                    <span style="font-size:0.75rem; color:var(--ink-grey);">展開</span>
+                    <span style="font-size:0.72rem; color:var(--ink-grey);">展開 ▾</span>
                 </div>
-                <div class="task-body-dropdown" id="task-drop-${taskId}">
+                <div class="task-body-dropdown" id="task-drop-${task.id}">
                     <p style="color:var(--ink-black); line-height: 1.5;">${task.desc}</p>
                     <div class="task-tips-box">${task.tips}</div>
                 </div>
@@ -682,7 +699,7 @@
         if (!isVisible) triggerSparkleParticles(event.clientX, event.clientY);
     }
 
-    // 任務可在點擊已完成後重新點擊恢復成未完成 (雙向切換)
+    // 任務可在點擊已完成後，重新點擊恢復成未完成
     function clickCheckbox(id, event) {
         event.stopPropagation();
         const nextState = !ST.checkedTasks[id];
@@ -692,7 +709,7 @@
             const m = new Date();
             ST.badgeDates[id] = `${String(m.getMonth()+1).padStart(2,'0')}/${String(m.getDate()).padStart(2,'0')}`;
             ST[`praise_word_${id}`] = PRAISE_WORDS[Math.floor(Math.random() * PRAISE_WORDS.length)];
-            triggerFullscreenSparks(); // 觸發獲得徽章與完成特效
+            triggerFullscreenSparks();
         } else {
             delete ST.badgeDates[id];
             delete ST[`praise_word_${id}`];
@@ -703,6 +720,7 @@
         pushToCloud();
     }
 
+    // 里程碑視覺化進度條
     function buildBadges() {
         const doneCount = Object.values(ST.checkedTasks).filter(Boolean).length;
         let nextMilestone = BADGES_CONFIG.find(b => b.req > doneCount);
@@ -710,41 +728,38 @@
         const fill = document.getElementById("badge-progress-fill");
 
         if (nextMilestone) {
-            alertBox.innerHTML = `🏅 距離下個勳章階梯還差 ${nextMilestone.req - doneCount} 個盲旅任務`;
+            alertBox.innerHTML = `🏅 距離下個成就在齊還差 ${nextMilestone.req - doneCount} 個任務`;
             fill.style.width = `${(doneCount / nextMilestone.req) * 100}%`;
         } else {
-            alertBox.innerHTML = "👑 恭喜！已完全解鎖大師級盲旅最高榮譽！";
+            alertBox.innerHTML = "👑 恭喜！十項全能盲旅終極大師勳章全解鎖！";
             fill.style.width = "100%";
         }
 
         const grid = document.getElementById("badge-grid-target");
         grid.innerHTML = "";
 
-        BADGES_CONFIG.forEach((b, idx) => {
+        BADGES_CONFIG.forEach((b) => {
             const isUnlocked = doneCount >= b.req;
             const item = document.createElement("div");
             item.className = `badge-item-card ${isUnlocked?'unlocked':''}`;
-            const taskId = `q_${b.req}`;
-            const unlockedDate = ST.badgeDates[taskId] || "05/30";
 
             item.innerHTML = `
                 <div class="badge-icon">${b.icon}</div>
                 <div class="badge-name">${b.name}</div>
-                ${isUnlocked ? `<div class="badge-date">${unlockedDate}</div>` : ''}
             `;
             grid.appendChild(item);
         });
     }
 
-    // ── 7. 莫蘭迪活潑粒子特效系統 ────────────────────────
+    // ── 6. 活潑亮晶晶粒子特殊效果 ────────────────────────
     function triggerSparkleParticles(x, y) {
         const box = document.getElementById("canvas-sparks");
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 6; i++) {
             const p = document.createElement("div");
             p.className = "sparkle-particle";
             p.style.left = `${x}px`; p.style.top = `${y}px`;
             const angle = Math.random() * Math.PI * 2;
-            const speed = 12 + Math.random() * 22;
+            const speed = 10 + Math.random() * 20;
             p.style.setProperty("--dx", `${Math.cos(angle)*speed}px`);
             p.style.setProperty("--dy", `${Math.sin(angle)*speed}px`);
             box.appendChild(p);
@@ -761,7 +776,7 @@
             p.style.backgroundColor = i % 2 === 0 ? "var(--sea-aqua)" : "var(--gold-accent)";
             p.style.left = `${w / 2}px`; p.style.top = `${h / 2}px`;
             const angle = Math.random() * Math.PI * 2;
-            const speed = 35 + Math.random() * 65;
+            const speed = 30 + Math.random() * 70;
             p.style.setProperty("--dx", `${Math.cos(angle)*speed}px`);
             p.style.setProperty("--dy", `${Math.sin(angle)*speed}px`);
             box.appendChild(p);
